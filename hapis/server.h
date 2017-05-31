@@ -15,6 +15,7 @@
 #define SERVER_PACKET_CHANNEL 0
 
 namespace Proxy {
+	class Client; // forward declaration
 
 	class Server {
 	public:

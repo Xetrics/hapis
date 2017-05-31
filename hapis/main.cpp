@@ -26,6 +26,7 @@ int main(int argc, const char* argv[])
 	{
 		RustNetAPI::Init();
 		Proxy::Server* server = new Proxy::Server(target_ip, target_port);
+		server->listen();
 		return 0;
 	}
 	catch (std::exception e)

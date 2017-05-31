@@ -9,6 +9,8 @@
 #define CLIENT_TIMEOUT 100
 
 namespace Proxy {
+	class Server; // forward declaration
+
 	class Client {
 	public:
 		RustNetAPI::RakPeer RakNetClient;
