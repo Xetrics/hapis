@@ -30,7 +30,7 @@ namespace RustNetAPI
 	};
 
 	/* this literally took me 2 hours to reverse all the exports and write their definitions accurately */
-
+	typedef int * RakPeer;
 	typedef uint64_t(__fastcall *NETRCV_AddressFn)(void* ptr);
 	typedef uint64_t(__fastcall *NETRCV_GUIDFn)(void* ptr);
 	typedef uint32_t(__fastcall *NETRCV_LengthBitsFn)(void* ptr);
@@ -52,7 +52,7 @@ namespace RustNetAPI
 	typedef void(__fastcall *NETSND_WriteCompressedInt64Fn)(void* ptr, uint64_t data);
 	typedef void(__fastcall *NET_CloseFn)(void* ptr);
 	typedef void(__fastcall *NET_CloseConnectionFn)(void* ptr, uint64_t connectionID);
-	typedef void*(__fastcall *NET_CreateFn)();
+	typedef int*(__fastcall *NET_CreateFn)();
 	typedef char*(__fastcall *NET_GetAddressFn)(void* ptr, uint64_t connectionID);
 	typedef uint32_t(__fastcall *NET_GetAveragePingFn)(void* ptr, uint64_t connectionID);
 	typedef uint64_t(__fastcall *NET_GetGUIDFn)(void* ptr); // unused?

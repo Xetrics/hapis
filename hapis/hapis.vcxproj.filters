@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\proxy">
+      <UniqueIdentifier>{859224dc-58b8-491e-b0e7-931aeb542ed1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\proxy">
+      <UniqueIdentifier>{08a0e616-7914-46bf-b7d0-fd5a0b545f30}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -24,6 +30,12 @@
     <ClCompile Include="md5.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="server.cpp">
+      <Filter>Source Files\proxy</Filter>
+    </ClCompile>
+    <ClCompile Include="client.cpp">
+      <Filter>Source Files\proxy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="rrapi.h">
@@ -31,6 +43,12 @@
     </ClInclude>
     <ClInclude Include="md5.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="server.h">
+      <Filter>Header Files\proxy</Filter>
+    </ClInclude>
+    <ClInclude Include="client.h">
+      <Filter>Header Files\proxy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
