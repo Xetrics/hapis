@@ -12,6 +12,7 @@ int main(int argc, const char* argv[])
 {
 
 	CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)Overlay::Init, NULL, NULL, NULL);
+	//Overlay::DrawFilledRectangle(0, 0, 25, 25, 1, 255, 255, 255);
 	std::string target_ip;
 	int target_port;
 

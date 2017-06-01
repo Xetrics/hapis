@@ -50,8 +50,8 @@ namespace Overlay {
 
 			//Drawing Stuff
 			ID3DXFont* pFont;
-			D3DXCreateFont(p_Device, 50, 0, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Arial", &pFont);
-			DrawString("Simple Text", 10, 10, 255, 255, 0, 0, pFont);
+			D3DXCreateFont(p_Device, 20, 0, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Arial", &pFont);
+			DrawString("hapis.exe", 25, 10, 255, 255, 255, 255, pFont);
 
 			p_Device->EndScene();
 			p_Device->PresentEx(0, 0, 0, 0, 0);
