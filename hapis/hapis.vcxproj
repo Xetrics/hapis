@@ -68,7 +68,10 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(IncludePath);$(SolutionDir)\Libraries\DX\Include</IncludePath>
+    <LibraryPath>$(LibraryPath);$(SolutionDir)\Libraries\DX\Lib</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -120,6 +123,7 @@
     <ClCompile Include="handleStealer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="md5.cpp" />
+    <ClCompile Include="overlay.cpp" />
     <ClCompile Include="rrapi.cpp" />
     <ClCompile Include="server.cpp" />
   </ItemGroup>
@@ -127,6 +131,7 @@
     <ClInclude Include="client.h" />
     <ClInclude Include="handleStealer.h" />
     <ClInclude Include="md5.h" />
+    <ClInclude Include="overlay.h" />
     <ClInclude Include="rrapi.h" />
     <ClInclude Include="server.h" />
     <ClInclude Include="util.h" />

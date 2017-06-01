@@ -6,13 +6,17 @@
 
 #include "rrapi.h"
 #include "server.h"
-#include "handleStealer.h"
+#include "overlay.h"
 
 int main(int argc, const char* argv[])
 {
+
+	Overlay::Init();
+
 	std::string target_ip;
 	int target_port;
 
+	/*
 	if (argc < 3) {
 		printf("Server IP: ");
 		getline(std::cin, target_ip);
@@ -38,5 +42,5 @@ int main(int argc, const char* argv[])
 	{
 		printf("ERROR: %s\n", e.what());
 		return 1;
-	}
+	}*/
 }
