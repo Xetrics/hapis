@@ -22,7 +22,7 @@ void ListenThread(Proxy::Server* server)
 					server->client = new Proxy::Client(server->target_ip, server->target_port, server);
 
 					/* wait for connection success packet */
-					while (!RustNetAPI::NET_Receive(server->client->pointer)) Sleep(10); /* wait for connection success packet */
+					while (!RustNetAPI::NET_Receive(server->client->pointer)) Sleep(10); 
 
 					/* store the server we are connecting to's identifier */
 					server->client->incoming_guid = RustNetAPI::NETRCV_GUID(server->client->pointer);

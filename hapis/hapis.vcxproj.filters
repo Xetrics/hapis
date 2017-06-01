@@ -36,6 +36,9 @@
     <ClCompile Include="client.cpp">
       <Filter>Source Files\proxy</Filter>
     </ClCompile>
+    <ClCompile Include="handleStealer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="rrapi.h">
@@ -51,6 +54,9 @@
       <Filter>Header Files\proxy</Filter>
     </ClInclude>
     <ClInclude Include="util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="handleStealer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -6,6 +6,7 @@
 
 #include "rrapi.h"
 #include "server.h"
+#include "handleStealer.h"
 
 int main(int argc, const char* argv[])
 {

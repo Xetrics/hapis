@@ -2,9 +2,9 @@
 
 #include <Windows.h>
 
-#define ATHREAD_NOTHREAD			0
-#define ATHREAD_TIMEOUT				1
-#define ATHREAD_FINISHED			2
+#define ATHREAD_NOTHREAD 0
+#define ATHREAD_TIMEOUT	1
+#define ATHREAD_FINISHED 2
 
 namespace util
 {
@@ -88,4 +88,6 @@ namespace util
 			return ATHREAD_FINISHED;
 		}
 	};
+
+
 }
