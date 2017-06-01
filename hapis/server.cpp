@@ -1,54 +1,62 @@
 #include "server.h"
+#include "util.h"
 
-Proxy::Server::Server(std::string target_ip, int target_port) {
+void ListenThread(Proxy::Server* server)
+{
+	while (server->alive)
+	{
+		char packet = RustNetAPI::NET_Receive(server->RakNetServer);
+		if (packet)
+		{
+			uint32_t size = RustNetAPI::NETRCV_LengthBits(server->RakNetServer) / 8;
+			unsigned char* raw_data = (unsigned char*)RustNetAPI::NETRCV_RawData(server->RakNetServer);
+			unsigned char id = raw_data[0];
+
+			printf("[Server] Packet received from client, ID: %d, size: %d\n", id, size);
+
+			if (id == NEW_INCOMING_CONNECTION)
+			{
+				server->incoming_guid = RustNetAPI::NETRCV_GUID(server->RakNetServer);
+
+				server->GameServerClient = new Proxy::Client(server->target_ip, server->target_port, server);
+				while (!RustNetAPI::NET_Receive(server->GameServerClient)) Sleep(10); /* wait for connection success packet */
+
+				unsigned char client_id = ((unsigned char*)RustNetAPI::NETRCV_RawData(server->GameServerClient))[0];
+				server->GameServerClient->Start();
+			}
+			else
+			{
+				// just send along the client packet to the server
+				RustNetAPI::NETSND_Start(server->GameServerClient->RakNetClient);
+				RustNetAPI::NETSND_WriteBytes(server->GameServerClient->RakNetClient, raw_data, size);
+				RustNetAPI::NETSND_Send(server->GameServerClient->RakNetClient, server->GameServerClient->incoming_guid, SERVER_PACKET_PRIORITY, SERVER_PACKET_RELIABILITY, SERVER_PACKET_CHANNEL);
+			}
+		}
+	}
+}
+
+Proxy::Server::Server(std::string target_ip, int target_port)
+{
 	this->RakNetServer = RustNetAPI::NET_Create();
 	this->alive = false;
 	this->target_ip = target_ip;
 	this->target_port = target_port;
-	this->guid = 0;
+	this->incoming_guid = 0;
 
-	// manual memory managment bad :/
-	char* memory_buffer = new char[4194304]; // 4 MB
-	this->rcvBuf = reinterpret_cast<unsigned char*>(memory_buffer);
+	if (RustNetAPI::NET_StartServer(this->RakNetServer, "127.0.0.1", SERVER_PORT, SERVER_MAX_CONNECTIONS) != 0)
+	{
+		printf("[Server] ERROR: Unable to start server on port %d\n", SERVER_PORT);
+		return;
+	}
+
+	printf("[Server] Listening on port %d\n", SERVER_PORT);
+
+	this->alive = true;
 }
 
-void Proxy::Server::listen() {
-	RustNetAPI::NET_StartServer(this->RakNetServer, "0.0.0.0", SERVER_PORT, SERVER_MAX_CONNECTIONS);
-	printf("Server listening on %d", SERVER_PORT);
-	this->alive = true;
-
-	while (this->alive) {
-		char packet = RustNetAPI::NET_Receive(this->RakNetServer);
-
-		if (packet) {
-			int size = (RustNetAPI::NETRCV_LengthBits(this->RakNetServer) / 8); // turn into define?
-			RustNetAPI::NETRCV_ReadBytes(this->RakNetServer, this->rcvBuf, size);
-			byte packetId = this->rcvBuf[0];
-
-			// execute hacks based on packet id later
-
-			if (packetId = NEW_INCOMING_CONNECTION) {
-				// set up new connection
-				uint64_t clientGUID = RustNetAPI::NETRCV_GUID(this->RakNetServer);
-				this->GameServerClient = new Proxy::Client(this->target_ip, this->target_port, clientGUID, this);
-				this->GameServerClient->listen();
-
-				while (this->guid == 0) Sleep(10);
-
-				int size = (RustNetAPI::NETRCV_LengthBits(this->RakNetServer) / 8); // turn into define?
-				RustNetAPI::NETRCV_ReadBytes(this->RakNetServer, this->rcvBuf, size);
-				RustNetAPI::NETSND_Start(this->GameServerClient->RakNetClient);
-				RustNetAPI::NETSND_WriteBytes(this->GameServerClient->RakNetClient, this->rcvBuf, size);
-				RustNetAPI::NETSND_Send(this->GameServerClient->RakNetClient, this->guid, SERVER_PACKET_PRIORITY, SERVER_PACKET_RELIABILITY, SERVER_PACKET_CHANNEL);
-			}
-			else {
-				// just send along the client packet to the server
-				RustNetAPI::NETSND_Start(this->GameServerClient->RakNetClient);
-				RustNetAPI::NETSND_WriteBytes(this->GameServerClient->RakNetClient, this->rcvBuf, size);
-				RustNetAPI::NETSND_Send(this->GameServerClient->RakNetClient, this->guid, SERVER_PACKET_PRIORITY, SERVER_PACKET_RELIABILITY, SERVER_PACKET_CHANNEL);
-			}
-		}
-	}
+void Proxy::Server::Start()
+{
+	thread = util::athread(ListenThread, this);
 }
 
 void Proxy::Server::SetGUID(uint64_t guid) {

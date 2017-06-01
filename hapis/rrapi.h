@@ -9,7 +9,7 @@
 
 namespace RustNetAPI
 {
-	extern void* Pointer;
+	typedef int* RakPeer;
 
 	/* http://www.jenkinssoftware.com/raknet/manual/Doxygen/structRakNet_1_1RakNetStatistics.html */
 	struct RaknetStats
@@ -30,9 +30,8 @@ namespace RustNetAPI
 	};
 
 	/* this literally took me 2 hours to reverse all the exports and write their definitions accurately */
-	typedef int * RakPeer;
 	typedef uint64_t(__fastcall *NETRCV_AddressFn)(void* ptr);
-	typedef uint64_t(__fastcall *NETRCV_GUIDFn)(void* ptr);
+	typedef uint64_t(__fastcall *NETRCV_GUIDFn)(void* ptr); // incomingGuid
 	typedef uint32_t(__fastcall *NETRCV_LengthBitsFn)(void* ptr);
 	typedef uint32_t(__fastcall *NETRCV_PortFn)(void* ptr);
 	typedef void*(__fastcall *NETRCV_RawDataFn)(void* ptr);

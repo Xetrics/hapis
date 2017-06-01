@@ -50,5 +50,8 @@
     <ClInclude Include="client.h">
       <Filter>Header Files\proxy</Filter>
     </ClInclude>
+    <ClInclude Include="util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -6,6 +6,7 @@
 
 #include "rrapi.h"
 #include "client.h"
+#include "util.h"
 
 #define SERVER_PORT 5678
 #define SERVER_MAX_CONNECTIONS 10
@@ -17,19 +18,23 @@
 namespace Proxy {
 	class Client; // forward declaration
 
-	class Server {
+	class Server
+	{
+	private:
+		util::athread thread;
+
 	public:
+		Server(std::string target_ip, int target_port);
+		void Start();
+		void SetGUID(uint64_t);
+
 		RustNetAPI::RakPeer RakNetServer;
 		Proxy::Client* GameServerClient;
-		void listen();
-		void SetGUID(uint64_t);
-		Server(std::string target_ip, int target_port);
 
 		bool alive;
 		std::string target_ip;
 		int target_port;
-		unsigned char* rcvBuf;
-		uint64_t guid;
+		uint64_t incoming_guid; /* the identifier for the client we are connected to (our pc) */
 	};
 
 }
