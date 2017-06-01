@@ -3,13 +3,9 @@
 #include <Windows.h>
 #include <ntstatus.h>
 #include <winternl.h>
-#include <TlHelp32.h>
 #include <functional>
-#include <Shlwapi.h> //remove
-#include <Psapi.h> //remove
 
 #pragma comment(lib, "ntdll.lib")
-#pragma comment(lib, "Shlwapi.lib")
 
 #define STATUS_INFO_LENGTH_MISMATCH 0xc0000004
 #define SystemHandleInformation 16
@@ -63,5 +59,4 @@ typedef struct _SYSTEM_HANDLE_INFORMATION
 } SYSTEM_HANDLE_INFORMATION, *PSYSTEM_HANDLE_INFORMATION;
 
 NTSTATUS enumerateHandles(std::function<NTSTATUS(PSYSTEM_HANDLE_TABLE_ENTRY_INFO)> callback);
-void print_handle_information();
 HANDLE getHandle(wchar_t* process);
