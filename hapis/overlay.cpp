@@ -33,23 +33,13 @@ namespace Overlay {
 			p_Device->Clear(0, 0, D3DCLEAR_TARGET, 0, 1.0f, 0);
 			p_Device->BeginScene();
 
-
 			//Drawing Stuff
 			ID3DXFont* pFont;
 			D3DXCreateFont(p_Device, 50, 0, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Arial", &pFont);
 			DrawString("Simple Text", 10, 10, 255, 255, 0, 0, pFont);
 
-
 			p_Device->EndScene();
 			p_Device->PresentEx(0, 0, 0, 0, 0);
-		}
-	}
-
-	void commandLoop() {
-		MSG msg;
-		while (GetMessage(&msg, NULL, 0, 0)) {
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
 		}
 	}
 
@@ -67,17 +57,16 @@ namespace Overlay {
 					tSize.top += 23;
 					height -= 23;
 				}
-				MoveWindow(hwnd, tSize.left, tSize.top, width, height, true);
+				MoveWindow(hwnd, tSize.left, tSize.top, width, height, TRUE);
 			}
 
-			Sleep(1);
+			Sleep(0);
 		}
 	}
 
 	void InitDirectX() {
 		if (FAILED(Direct3DCreate9Ex(D3D_SDK_VERSION, &p_Object)))
 			printf("[Overlay] Failed to create Direct3DCreate9Ex object, sdk version %d", D3D_SDK_VERSION);
-
 		ZeroMemory(&p_Params, sizeof(p_Params));
 		p_Params.Windowed = TRUE;
 		p_Params.SwapEffect = D3DSWAPEFFECT_DISCARD;
@@ -150,6 +139,13 @@ namespace Overlay {
 			InitDirectX();
 		}
 
-		CreateThread(FALSE, FALSE, (LPTHREAD_START_ROUTINE)commandLoop, FALSE, FALSE, FALSE);
+		MSG Message;
+		for (;;) {
+			if (PeekMessage(&Message, hwnd, 0, 0, PM_REMOVE)) {
+				DispatchMessage(&Message);
+				TranslateMessage(&Message);
+			}
+			Sleep(0);
+		}
 	}
 }

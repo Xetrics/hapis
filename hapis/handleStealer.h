@@ -6,7 +6,9 @@
 #include <functional>
 #include <TlHelp32.h>
 #include <Psapi.h>
+#include <Shlwapi.h>
 
+#pragma comment(lib, "shlwapi.lib")
 #pragma comment(lib, "ntdll.lib")
 
 #define STATUS_INFO_LENGTH_MISMATCH 0xc0000004

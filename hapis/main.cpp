@@ -11,12 +11,11 @@
 int main(int argc, const char* argv[])
 {
 
-	Overlay::Init();
-
+	CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)Overlay::Init, NULL, NULL, NULL);
 	std::string target_ip;
 	int target_port;
 
-	/*
+	
 	if (argc < 3) {
 		printf("Server IP: ");
 		getline(std::cin, target_ip);
@@ -42,5 +41,5 @@ int main(int argc, const char* argv[])
 	{
 		printf("ERROR: %s\n", e.what());
 		return 1;
-	}*/
+	}
 }
