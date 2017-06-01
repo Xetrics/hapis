@@ -5,8 +5,6 @@
 #include <winternl.h>
 #include <TlHelp32.h>
 #include <functional>
-#include <Shlwapi.h> //remove
-#include <Psapi.h> //remove
 
 #pragma comment(lib, "ntdll.lib")
 #pragma comment(lib, "Shlwapi.lib")
