@@ -14,10 +14,17 @@ void ListenThread(Proxy::Client* client)
 
 			// TODO: handle client disconnecting from game server ? (ID_DISCONNECTION_NOTIFICATION, ID_CONNECTION_LOST, etc)
 
-			if (data[0] == ID_DISCONNECTION_NOTIFICATION)
+			switch (data[0])
 			{
-				printf("[Client] Disconnection notification received, disconnecting...\n");
+			case ID_DISCONNECTION_NOTIFICATION:
+				printf("[Client] Disconnection notification received from game server, disconnecting...\n");
 				client->server->Close();
+				client->Close();
+				return;
+			case ID_CONNECTION_LOST:
+				printf("[Client] Connection to game server lost, disconnecting from client and closing...\n");
+				client->server->is_alive = false;
+				client->server->Send(data, size);
 				client->Close();
 				return;
 			}
@@ -67,8 +74,12 @@ void Proxy::Client::Send(unsigned char* data, uint32_t size)
 
 void Proxy::Client::Close()
 {
-	RustNetAPI::NET_Close(this->pointer);
-	this->pointer = 0;
-	this->is_connected = false;
-	this->incoming_guid = 0;
+	if (this->pointer && this->is_connected)
+	{
+		RustNetAPI::NET_Close(this->pointer);
+		this->pointer = 0;
+		this->is_connected = false;
+		this->incoming_guid = 0;
+		this->thread.terminate();
+	}
 }

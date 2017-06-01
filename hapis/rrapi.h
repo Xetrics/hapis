@@ -103,4 +103,30 @@ namespace RustNetAPI
 	extern NET_StartServerFn NET_StartServer;
 
 	void Init();
+
+	enum MessageType
+	{
+		Welcome = 140,
+		Auth = 141,
+		Approved = 142,
+		Ready = 143,
+		Entities = 144,
+		EntityDestroy = 145,
+		GroupChange = 146,
+		GroupDestroy = 147,
+		RPCMessage = 148,
+		EntityPosition = 149,
+		ConsoleMessage = 150,
+		ConsoleCommand = 151,
+		Effect = 152,
+		DisconnectReason = 153,
+		Tick = 154,
+		Message = 155,
+		RequestUserInformation = 156,
+		GiveUserInformation = 157,
+		GroupEnter = 158,
+		GroupLeave = 159,
+		Last = 160,
+		VoiceData = 161,
+	};
 }
