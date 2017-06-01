@@ -3,11 +3,9 @@
 #include <Windows.h>
 #include <ntstatus.h>
 #include <winternl.h>
-#include <TlHelp32.h>
 #include <functional>
 
 #pragma comment(lib, "ntdll.lib")
-#pragma comment(lib, "Shlwapi.lib")
 
 #define STATUS_INFO_LENGTH_MISMATCH 0xc0000004
 #define SystemHandleInformation 16
