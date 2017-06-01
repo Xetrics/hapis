@@ -5,6 +5,7 @@
 #include <winternl.h>
 #include <functional>
 #include <TlHelp32.h>
+#include <Psapi.h>
 
 #pragma comment(lib, "ntdll.lib")
 
