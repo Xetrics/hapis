@@ -10,7 +10,11 @@
 
 #define SERVER_PORT 5678
 #define SERVER_MAX_CONNECTIONS 10
+#define PROXY_TICK_MS 10
+
 #define NEW_INCOMING_CONNECTION 19
+#define CONNECTION_REQUEST_ACCEPTED 16
+
 #define SERVER_PACKET_PRIORITY 2
 #define SERVER_PACKET_RELIABILITY 0
 #define SERVER_PACKET_CHANNEL 0
@@ -26,7 +30,8 @@ namespace Proxy {
 	public:
 		Server(std::string target_ip, int target_port);
 		void Start();
-		void SetGUID(uint64_t);
+		void Send(unsigned char* data, uint32_t size);
+		void Close();
 
 		RustNetAPI::RakPeer RakNetServer;
 		Proxy::Client* GameServerClient;

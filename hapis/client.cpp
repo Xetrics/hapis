@@ -3,26 +3,20 @@
 
 void ListenThread(Proxy::Client* client)
 {
-	printf("[Client] Connected to game server: %s:%d", this->target_ip.c_str(), this->target_port);
+	while (client->connected)
+	{
+		while (RustNetAPI::NET_Receive(client->RakNetClient))
+		{
+			uint32_t size = RustNetAPI::NETRCV_LengthBits(client->RakNetClient) / 8;
+			unsigned char* data = (unsigned char*)RustNetAPI::NETRCV_RawData(client->RakNetClient);
 
-	// we cant do anything until we have the server GUID
-	while (this->ProxyServer->guid == 0) {
-		while (!RustNetAPI::NET_Receive(this->RakNetClient)) Sleep(10);
+			printf("[Client] Packet received from game server, ID: %d, size: %d\n", data[0], size);
 
-		uint64_t serverGUID = RustNetAPI::NETRCV_GUID(this->RakNetClient);
+			// TODO: handle client disconnecting from game server ? (ID_DISCONNECTION_NOTIFICATION, ID_CONNECTION_LOST, etc)
 
-
-		this->ProxyServer->SetGUID(serverGUID);
-	}
-
-	// commence proxying :>
-	while (connected) {
-		char packet = RustNetAPI::NET_Receive(this->RakNetClient);
-		int size = (RustNetAPI::NETRCV_LengthBits(this->RakNetClient) / 8); // turn into define?
-		RustNetAPI::NETRCV_ReadBytes(this->RakNetClient, this->rcvBuf, size);
-		RustNetAPI::NETSND_Start(this->ProxyServer->RakNetServer);
-		RustNetAPI::NETSND_WriteBytes(this->ProxyServer->RakNetServer, this->rcvBuf, size);
-		RustNetAPI::NETSND_Send(this->ProxyServer->RakNetServer, this->guid, SERVER_PACKET_PRIORITY, SERVER_PACKET_RELIABILITY, SERVER_PACKET_CHANNEL);
+			/* game server sent a packet to proxy, forward to client */
+			client->ProxyServer->Send(data, size);
+		}
 	}
 }
 
@@ -40,10 +34,26 @@ Proxy::Client::Client(std::string target_ip, int target_port, Proxy::Server* ser
 		return;
 	}
 
-	printf("[Client] Client started, attempted to connect to server %s:%d\n", this->target_ip.c_str(), target_port);
+	printf("[Client] Client started, attempt made to connect to game server: %s:%d\n", this->target_ip.c_str(), target_port);
 }
 
 void Proxy::Client::Start()
 {
 	thread = util::athread(ListenThread, this);
+}
+
+void Proxy::Client::Send(unsigned char* data, uint32_t size)
+{
+	if (!this->incoming_guid) return;
+	RustNetAPI::NETSND_Start(this->RakNetClient);
+	RustNetAPI::NETSND_WriteBytes(this->RakNetClient, data, size);
+	RustNetAPI::NETSND_Send(this->RakNetClient, this->incoming_guid, SERVER_PACKET_PRIORITY, SERVER_PACKET_RELIABILITY, SERVER_PACKET_CHANNEL);
+}
+
+void Proxy::Client::Close()
+{
+	RustNetAPI::NET_Close(this->RakNetClient);
+	this->RakNetClient = 0;
+	this->connected = false;
+	this->incoming_guid = 0;
 }

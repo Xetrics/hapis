@@ -19,6 +19,8 @@ namespace Proxy {
 	public:
 		Client(std::string target_ip, int target_port, Proxy::Server* server);
 		void Start();
+		void Send(unsigned char* data, uint32_t size);
+		void Close();
 		
 		RustNetAPI::RakPeer RakNetClient;
 		Proxy::Server* ProxyServer;
