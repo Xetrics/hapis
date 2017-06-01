@@ -29,7 +29,7 @@ int main(int argc, const char* argv[])
 		Proxy::Server* server = new Proxy::Server(target_ip, target_port);
 		server->Start();
 
-		while (server->alive) Sleep(1000);
+		while (server->is_alive) Sleep(1000);
 		
 		return 0;
 	}

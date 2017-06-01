@@ -12,8 +12,11 @@
 #define SERVER_MAX_CONNECTIONS 10
 #define PROXY_TICK_MS 10
 
-#define NEW_INCOMING_CONNECTION 19
 #define CONNECTION_REQUEST_ACCEPTED 16
+#define NEW_INCOMING_CONNECTION 19
+#define ID_DISCONNECTION_NOTIFICATION 21
+#define ID_CONNECTION_LOST 22
+
 
 #define SERVER_PACKET_PRIORITY 2
 #define SERVER_PACKET_RELIABILITY 0
@@ -29,14 +32,17 @@ namespace Proxy {
 
 	public:
 		Server(std::string target_ip, int target_port);
+		~Server();
+		Server(const Server& other) = delete;
+
 		void Start();
 		void Send(unsigned char* data, uint32_t size);
 		void Close();
 
-		RustNetAPI::RakPeer RakNetServer;
-		Proxy::Client* GameServerClient;
+		RustNetAPI::RakPeer pointer;
+		Proxy::Client* client;
 
-		bool alive;
+		bool is_alive;
 		std::string target_ip;
 		int target_port;
 		uint64_t incoming_guid; /* the identifier for the client we are connected to (our pc) */
