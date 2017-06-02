@@ -6,10 +6,10 @@ void ListenThread(Proxy::Server* server)
 {
 	while (server->is_alive)
 	{
-		while (RustNetAPI::NET_Receive(server->pointer))
+		while (Rust::API::NET_Receive(server->pointer))
 		{
-			uint32_t size = RustNetAPI::NETRCV_LengthBits(server->pointer) / 8;
-			unsigned char* data = (unsigned char*)RustNetAPI::NETRCV_RawData(server->pointer);
+			uint32_t size = Rust::API::NETRCV_LengthBits(server->pointer) / 8;
+			unsigned char* data = (unsigned char*)Rust::API::NETRCV_RawData(server->pointer);
 
 			printf("[Server] Packet received from client, ID: %d, size: %d\n", data[0], size);
 
@@ -17,19 +17,19 @@ void ListenThread(Proxy::Server* server)
 			{
 				case NEW_INCOMING_CONNECTION:
 				{
-					server->incoming_guid = RustNetAPI::NETRCV_GUID(server->pointer);
+					server->incoming_guid = Rust::API::NETRCV_GUID(server->pointer);
 
 					/* connect */
 					server->client = new Proxy::Client(server->target_ip, server->target_port, server);
 
 					/* wait for connection success packet */
-					while (!RustNetAPI::NET_Receive(server->client->pointer)) Sleep(10); 
+					while (!Rust::API::NET_Receive(server->client->pointer)) Sleep(10); 
 
 					/* store the server we are connecting to's identifier */
-					server->client->incoming_guid = RustNetAPI::NETRCV_GUID(server->client->pointer);
+					server->client->incoming_guid = Rust::API::NETRCV_GUID(server->client->pointer);
 
 					/* check if we successfully connected */
-					unsigned char client_id = ((unsigned char*)RustNetAPI::NETRCV_RawData(server->client->pointer))[0];
+					unsigned char client_id = ((unsigned char*)Rust::API::NETRCV_RawData(server->client->pointer))[0];
 					if (client_id == CONNECTION_REQUEST_ACCEPTED)
 					{
 						/* start receiving packets from the server */
@@ -62,7 +62,7 @@ void ListenThread(Proxy::Server* server)
 					server->Close();
 					return;
 				default:
-					OnRustPacketSent();
+					OnRustPacketSent(server, data, size);
 					server->client->Send(data, size);
 			}
 		}
@@ -73,13 +73,13 @@ void ListenThread(Proxy::Server* server)
 
 Proxy::Server::Server(std::string target_ip, int target_port)
 {
-	this->pointer = RustNetAPI::NET_Create();
+	this->pointer = Rust::API::NET_Create();
 	this->is_alive = false;
 	this->target_ip = target_ip;
 	this->target_port = target_port;
 	this->incoming_guid = 0;
 
-	if (RustNetAPI::NET_StartServer(this->pointer, "127.0.0.1", SERVER_PORT, SERVER_MAX_CONNECTIONS) != 0)
+	if (Rust::API::NET_StartServer(this->pointer, "127.0.0.1", SERVER_PORT, SERVER_MAX_CONNECTIONS) != 0)
 	{
 		printf("[Server] ERROR: Unable to start server on port %d\n", SERVER_PORT);
 		return;
@@ -103,16 +103,16 @@ void Proxy::Server::Start()
 void Proxy::Server::Send(unsigned char* data, uint32_t size)
 {
 	if (!this->incoming_guid) return;
-	RustNetAPI::NETSND_Start(this->pointer);
-	RustNetAPI::NETSND_WriteBytes(this->pointer, data, size);
-	RustNetAPI::NETSND_Send(this->pointer, this->incoming_guid, SERVER_PACKET_PRIORITY, SERVER_PACKET_RELIABILITY, SERVER_PACKET_CHANNEL);
+	Rust::API::NETSND_Start(this->pointer);
+	Rust::API::NETSND_WriteBytes(this->pointer, data, size);
+	Rust::API::NETSND_Send(this->pointer, this->incoming_guid, SERVER_PACKET_PRIORITY, SERVER_PACKET_RELIABILITY, SERVER_PACKET_CHANNEL);
 }
 
 void Proxy::Server::Close()
 {
 	if (this->pointer && this->is_alive)
 	{
-		RustNetAPI::NET_Close(this->pointer);
+		Rust::API::NET_Close(this->pointer);
 		this->pointer = 0;
 		this->is_alive = false;
 		this->incoming_guid = 0;

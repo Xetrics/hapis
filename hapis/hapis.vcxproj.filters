@@ -74,5 +74,8 @@
     <ClInclude Include="main.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="message.h">
+      <Filter>Header Files\rust</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

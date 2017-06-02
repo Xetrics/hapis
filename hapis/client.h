@@ -26,7 +26,7 @@ namespace Proxy {
 		void Send(unsigned char* data, uint32_t size);
 		void Close();
 		
-		RustNetAPI::RakPeer pointer;
+		Rust::API::RakPeer pointer;
 		Proxy::Server* server;
 
 		std::string target_ip;
