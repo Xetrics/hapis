@@ -15,13 +15,24 @@ void OnRustPacketReceived(Proxy::Client* client, unsigned char* data, uint32_t s
 	{
 		//Rust::EntityPositionMessage* message = (Rust::EntityPositionMessage*)Rust::Message::MessageFromPacket(client->pointer, data, size);
 
-		Rust::EntityPositionMessage message;
+		/*Rust::EntityPositionMessage message;
 		message.Deserialize(client->pointer);
 
 		printf("EntityPosition packet received!\n\t- Entity ID: %d\n\t- Position: %f, %f, %f\n\t- Rotation: %f, %f, %f\n",
 			message.entity_id,
 			message.position.x, message.position.y, message.position.z,
-			message.rotation.x, message.rotation.y, message.rotation.z);
+			message.rotation.x, message.rotation.y, message.rotation.z);*/
+
+		//*(float*)(data + 5) = -25.8;
+		//*(float*)(data + 9) = 16;
+		//*(float*)(data + 13) = -155.4;
+	}
+	else if (data[0] == Rust::MessageType::ConsoleCommand)
+	{
+		Rust::ConsoleCommandMessage message;
+		message.Deserialize(client->pointer);
+
+		printf("Console command received from server, command: %s\n", message.command.c_str());
 	}
 }
 

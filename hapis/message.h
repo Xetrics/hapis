@@ -10,6 +10,7 @@ namespace Rust
 {
 	enum MessageType
 	{
+		First = 141,
 		Welcome = 141,
 		Auth = 142,
 		Approved = 143,
@@ -76,6 +77,19 @@ namespace Rust
 			return MessageFromPacket(pointer, (unsigned char*)API::NETRCV_RawData(pointer), API::NETRCV_LengthBits(pointer) / 8);
 		}
 
+		static const char* TypeToName(MessageType type)
+		{
+			if (type < MessageType::First || type > MessageType::Last) return 0;
+			static const char* MessageNames[21] = { "Welcome",	"Auth", "Approved", "Ready", "Entities", "EntityDestroy", "GroupChange", "GroupDestroy", "RPCMessage", "EntityPosition", "ConsoleMessage",
+				"ConsoleCommand", "Effect", "DisconnectReason", "Tick", "Message", "RequestUserInformation", "GiveUserInformation", "GroupEnter", "GroupLeave", "VoiceData" };
+			return MessageNames[type - MessageType::First];
+		}
+
+		const char* ToString()
+		{
+			return TypeToName(type);
+		}
+
 		MessageType type;
 	};
 	
@@ -88,7 +102,6 @@ namespace Rust
 		Vector3 position;
 		Vector3 rotation;
 	public:
-
 		virtual void Serialize(void* pointer)
 		{
 			Write<uint8_t>(pointer, MessageType::EntityPosition);
@@ -103,6 +116,25 @@ namespace Rust
 			entity_id = Read<uint32_t>(pointer);
 			position = Read<Vector3>(pointer);
 			rotation = Read<Vector3>(pointer);
+		}
+	};
+
+	class ConsoleCommandMessage : public Message
+	{
+	public:
+		std::string command;
+
+	public:
+		virtual void Serialize(void* pointer)
+		{
+			Write<uint8_t>(pointer, MessageType::ConsoleCommand);
+			WriteString(pointer, command);
+		}
+
+		virtual void Deserialize(void* pointer)
+		{
+			assert((type = (MessageType)Read<uint8_t>(pointer)) == MessageType::ConsoleCommand);
+			command = ReadString(pointer);
 		}
 	};
 }

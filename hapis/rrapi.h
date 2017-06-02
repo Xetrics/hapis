@@ -1,6 +1,8 @@
 #pragma once
 
 #include <cstdint>
+#include <cassert>
+#include <string>
 
 /* Rust RakNet API */
 
@@ -129,4 +131,7 @@ namespace Rust
 		API::NETSND_WriteBytes(pointer, (unsigned char*)&value, sizeof(T));
 		return;
 	}
+
+	std::string ReadString(void* pointer);
+	void WriteString(void* pointer, const std::string& string);
 }

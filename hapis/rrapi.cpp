@@ -112,4 +112,25 @@ namespace Rust
 			NET_StartServer = (NET_StartServerFn)GetProcAddress(Module, "NET_StartServer");
 		}
 	}
+
+	std::string ReadString(void* pointer)
+	{
+		std::string value = "";
+		uint32_t size = Read<uint32_t>(pointer);
+
+		if (size > 0 && size < 10485761)
+		{
+			value.resize(size);
+			API::NETRCV_ReadBytes(pointer, (unsigned char*)value.c_str(), size);
+		}
+
+		return value;
+	}
+
+	void WriteString(void* pointer, const std::string& value)
+	{
+		assert(value.size() < 10485761);
+		Write<uint32_t>(pointer, value.size());
+		API::NETSND_WriteBytes(pointer, (unsigned char*)value.c_str(), value.size());
+	}
 }

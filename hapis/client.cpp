@@ -1,6 +1,7 @@
 #include "client.h"
 #include "util.h"
 #include "main.h"
+#include "message.h"
 
 void ListenThread(Proxy::Client* client)
 {
@@ -11,7 +12,7 @@ void ListenThread(Proxy::Client* client)
 			uint32_t size = Rust::API::NETRCV_LengthBits(client->pointer) / 8;
 			unsigned char* data = (unsigned char*)Rust::API::NETRCV_RawData(client->pointer);
 
-			printf("[Client] Packet received from game server, ID: %d, size: %d\n", data[0], size);
+			printf("[Client] Packet received from game server, ID: %d (%s), size: %d\n", data[0], Rust::Message::TypeToName((Rust::MessageType)data[0]), size);
 
 			switch (data[0])
 			{
