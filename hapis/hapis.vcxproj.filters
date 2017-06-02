@@ -71,5 +71,8 @@
     <ClInclude Include="rrapi.h">
       <Filter>Header Files\rust</Filter>
     </ClInclude>
+    <ClInclude Include="main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

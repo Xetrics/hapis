@@ -1,5 +1,6 @@
 #include "server.h"
 #include "util.h"
+#include "main.h"
 
 void ListenThread(Proxy::Server* server)
 {
@@ -61,6 +62,7 @@ void ListenThread(Proxy::Server* server)
 					server->Close();
 					return;
 				default:
+					OnRustPacketSent();
 					server->client->Send(data, size);
 			}
 		}

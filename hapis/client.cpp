@@ -1,5 +1,6 @@
 #include "client.h"
 #include "util.h"
+#include "main.h"
 
 void ListenThread(Proxy::Client* client)
 {
@@ -11,8 +12,6 @@ void ListenThread(Proxy::Client* client)
 			unsigned char* data = (unsigned char*)RustNetAPI::NETRCV_RawData(client->pointer);
 
 			printf("[Client] Packet received from game server, ID: %d, size: %d\n", data[0], size);
-
-			// TODO: handle client disconnecting from game server ? (ID_DISCONNECTION_NOTIFICATION, ID_CONNECTION_LOST, etc)
 
 			switch (data[0])
 			{
@@ -30,6 +29,7 @@ void ListenThread(Proxy::Client* client)
 			}
 
 			/* game server sent a packet to proxy, forward to client */
+			OnRustPacketReceived(data, size);
 			client->server->Send(data, size);
 		}
 

@@ -8,6 +8,16 @@
 #include "server.h"
 #include "overlay.h"
 
+void OnRustPacketReceived(unsigned char* data, uint32_t size)
+{
+
+}
+
+void OnRustPacketSent(unsigned char* data, uint32_t size)
+{
+
+}
+
 int main(int argc, const char* argv[])
 {
 
