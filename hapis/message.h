@@ -4,6 +4,10 @@
 #include <cstdint>
 #include <cassert>
 
+#pragma comment(lib, "libprotobuf.lib")
+#pragma comment(lib, "libprotobuf-lite.lib")
+#pragma comment(lib, "libprotoc.lib")
+
 #include "rrapi.h"
 
 namespace Rust

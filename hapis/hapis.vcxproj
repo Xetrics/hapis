@@ -69,8 +69,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(IncludePath);$(SolutionDir)\Libraries\DX\Include</IncludePath>
-    <LibraryPath>$(LibraryPath);$(SolutionDir)\Libraries\DX\Lib</LibraryPath>
+    <IncludePath>$(IncludePath);$(SolutionDir)\Libraries\DX\Include;$(SolutionDir)\Libraries\protobuf-2.5.0\Include;</IncludePath>
+    <LibraryPath>$(LibraryPath);$(SolutionDir)\Libraries\DX\Lib;$(SolutionDir)\Libraries\protobuf-2.5.0\Lib;</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -124,6 +124,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="md5.cpp" />
     <ClCompile Include="overlay.cpp" />
+    <ClCompile Include="protos\main.pb.cc" />
     <ClCompile Include="rrapi.cpp" />
     <ClCompile Include="server.cpp" />
   </ItemGroup>
@@ -134,9 +135,13 @@
     <ClInclude Include="md5.h" />
     <ClInclude Include="message.h" />
     <ClInclude Include="overlay.h" />
+    <ClInclude Include="protos\main.pb.h" />
     <ClInclude Include="rrapi.h" />
     <ClInclude Include="server.h" />
     <ClInclude Include="util.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="protos\main.proto" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

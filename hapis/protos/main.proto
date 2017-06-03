@@ -1,0 +1,5 @@
+message BaseNetworkable {
+    required uint32 uid = 1;
+    required uint32 group = 2;
+    required uint32 prefabID = 3;
+}

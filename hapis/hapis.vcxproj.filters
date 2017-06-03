@@ -25,6 +25,15 @@
     <Filter Include="Source Files\rust">
       <UniqueIdentifier>{adbfafac-2728-4b78-9ab0-c1f40beade98}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\protos">
+      <UniqueIdentifier>{b0cfe80b-0159-44ba-bd5e-2682983eb11d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\protos">
+      <UniqueIdentifier>{a5f4a2ba-4d34-4316-be83-08583500feb7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Proto Files">
+      <UniqueIdentifier>{02c7d666-1084-490c-bbd5-f52fd43e2e2d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -47,6 +56,9 @@
     </ClCompile>
     <ClCompile Include="rrapi.cpp">
       <Filter>Source Files\rust</Filter>
+    </ClCompile>
+    <ClCompile Include="protos\main.pb.cc">
+      <Filter>Source Files\protos</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -77,5 +89,13 @@
     <ClInclude Include="message.h">
       <Filter>Header Files\rust</Filter>
     </ClInclude>
+    <ClInclude Include="protos\main.pb.h">
+      <Filter>Header Files\protos</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="protos\main.proto">
+      <Filter>Proto Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
