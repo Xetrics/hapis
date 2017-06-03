@@ -12,7 +12,7 @@ void ListenThread(Proxy::Server* server)
 			uint32_t size = Rust::API::NETRCV_LengthBits(server->pointer) / 8;
 			unsigned char* data = (unsigned char*)Rust::API::NETRCV_RawData(server->pointer);
 
-			printf("[Server] Packet received from client, ID: %d (%s), size: %d\n", data[0], Rust::Message::TypeToName((Rust::MessageType)data[0]), size);
+			//printf("[Server] Packet received from client, ID: %d (%s), size: %d\n", data[0], Rust::Message::TypeToName((Rust::MessageType)data[0]), size);
 
 			switch (data[0])
 			{

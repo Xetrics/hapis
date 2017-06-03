@@ -34,6 +34,20 @@ void OnRustPacketReceived(Proxy::Client* client, unsigned char* data, uint32_t s
 
 		printf("Console command received from server, command: %s\n", message.command.c_str());
 	}
+	else if (data[0] == Rust::MessageType::Entities)
+	{
+		printf("Entities packet, type: %d, num: %d\nBytes: ", data[5], *(int*)(data + 1));
+
+		std::string str;
+		for (int i = 0; i < size; i++)
+		{
+			char buffer[2] = { 0 };
+			sprintf(buffer, "%02X", data[i]);
+			str = str + buffer + " ";
+		}
+
+		printf("%s\n", str.c_str());
+	}
 }
 
 void OnRustPacketSent(Proxy::Server* server, unsigned char* data, uint32_t size)
