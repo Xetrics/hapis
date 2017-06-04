@@ -34,6 +34,9 @@
     <Filter Include="Proto Files">
       <UniqueIdentifier>{02c7d666-1084-490c-bbd5-f52fd43e2e2d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\rust\classes">
+      <UniqueIdentifier>{3ecc1aec-b5a5-4e66-88e7-3fc3f7c7cc82}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -48,9 +51,6 @@
     <ClCompile Include="client.cpp">
       <Filter>Source Files\proxy</Filter>
     </ClCompile>
-    <ClCompile Include="handleStealer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="overlay.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -62,6 +62,15 @@
     </ClCompile>
     <ClCompile Include="stringpool.cpp">
       <Filter>Source Files\rust</Filter>
+    </ClCompile>
+    <ClCompile Include="drawing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="math.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LocalPlayer.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -75,9 +84,6 @@
       <Filter>Header Files\proxy</Filter>
     </ClInclude>
     <ClInclude Include="util.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="handleStealer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="overlay.h">
@@ -97,6 +103,15 @@
     </ClInclude>
     <ClInclude Include="stringpool.h">
       <Filter>Header Files\rust</Filter>
+    </ClInclude>
+    <ClInclude Include="drawing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LocalPlayer.h">
+      <Filter>Header Files\rust\classes</Filter>
+    </ClInclude>
+    <ClInclude Include="math.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

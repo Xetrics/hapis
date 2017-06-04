@@ -121,8 +121,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="client.cpp" />
-    <ClCompile Include="handleStealer.cpp" />
+    <ClCompile Include="drawing.cpp" />
+    <ClCompile Include="LocalPlayer.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="math.cpp" />
     <ClCompile Include="md5.cpp" />
     <ClCompile Include="overlay.cpp" />
     <ClCompile Include="protos\main.pb.cc" />
@@ -132,8 +134,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="client.h" />
-    <ClInclude Include="handleStealer.h" />
+    <ClInclude Include="drawing.h" />
+    <ClInclude Include="LocalPlayer.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="math.h" />
     <ClInclude Include="md5.h" />
     <ClInclude Include="message.h" />
     <ClInclude Include="overlay.h" />

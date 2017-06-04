@@ -14,31 +14,9 @@ namespace Overlay {
 	IDirect3DDevice9Ex* p_Device;
 	D3DPRESENT_PARAMETERS p_Params;
 
-	/* DRAWING FUNCTIONS ========================================== */
-	void DrawString(char* String, int x, int y, int a, int r, int g, int b, ID3DXFont* font) {
-		RECT FontPos;
-		FontPos.left = x;
-		FontPos.top = y;
-		font->DrawTextA(0, String, strlen(String), &FontPos, DT_NOCLIP, D3DCOLOR_ARGB(a, r, g, b));
-	}
-
-	void DrawFilledRectangle(float x, float y, float w, float h, int a, int r, int g, int b) {
-		D3DCOLOR color = D3DCOLOR_ARGB(a, r, g, b);
-		D3DRECT rect = { x, y, w, h };
-		p_Device->Clear(1, &rect, D3DCLEAR_TARGET | D3DCLEAR_TARGET, color, 0, 0);
-	}
-
-	void DrawBorderBox(int x, int y, int w, int h, int thickness, int a, int r, int g, int b) {
-		DrawFilledRectangle(x, y, w, y + thickness, a, r, g, b); // x
-		DrawFilledRectangle(x, y, x + thickness, h, a, r, g, b); // y
-		DrawFilledRectangle(x, h, w, h + thickness, a, r, g, b); // w
-		DrawFilledRectangle(w, y, w + thickness, h + thickness, a, r, g, b); // h
-	}
-	/* ========================================================= */
-
 	void render() {
 		if (tHwnd == GetForegroundWindow()) {
-			char * value = OVERLAY_TARGET;
+			char* value = OVERLAY_TARGET;
 
 			HWND newhwnd = FindWindow(NULL, value);
 			if (newhwnd != NULL) {
@@ -48,23 +26,28 @@ namespace Overlay {
 			p_Device->Clear(0, 0, D3DCLEAR_TARGET, 0, 1.0f, 0);
 			p_Device->BeginScene();
 
-			// watermark
+			/* Draw Watermark */
 			ID3DXFont* pFont;
 			D3DXCreateFont(p_Device, 20, 0, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Arial", &pFont);
-			DrawString("hapis.exe", 25, 10, 255, 255, 255, 255, pFont);
+			Drawing::DrawString("hapis.exe", 25, 10, 255, 255, 255, 255, pFont);
 
-			// draw esp boxes
-			/*for (auto& player : players) {
-				printf("%d @ %f, %f, %f\n", player.first, player.second.x, player.second.y, player.second.z);
-			}*/
+			/* Draw ESP Boxes */
+			for (auto player : players) {
+				Rust::Vector3 pos;
+				bool visible = Math::WorldToScreen(player.second, pos, localPlayer->viewMatrix, width, height);
 
+				if (visible)  Drawing::DrawString("player", pos.x, pos.y, 255, 255, 255, 255, pFont);
+			}
+
+			/* Draw Scene */
 			p_Device->EndScene();
 			p_Device->PresentEx(0, 0, 0, 0, 0);
 		}
 	}
 
+	/* Moves the invisible window to the position and size of Rust */
 	void setWindowToTarget() {
-		while (true) {
+		for(;;) {
 			tHwnd = FindWindow(FALSE, OVERLAY_TARGET);
 			if (tHwnd)
 			{
@@ -102,6 +85,7 @@ namespace Overlay {
 			printf("[Overlay] Failed to create create DX device");
 	}
 
+	/* Fuck WinAPI */
 	LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 		switch (msg)
