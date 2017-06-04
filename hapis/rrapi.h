@@ -134,4 +134,53 @@ namespace Rust
 
 	std::string ReadString(void* pointer);
 	void WriteString(void* pointer, const std::string& string);
+
+	/* idk i dont want a ton of extern vars */
+	class LocalPlayer {
+	public: 
+		Vector3 pos;
+		Vector3 rot;
+		float viewMatrix[4][4];
+		int entityId;
+
+		LocalPlayer(Vector3 pos, Vector3 rot, int entityId) {
+			this->pos = pos;
+			this->rot = rot;
+			this->entityId = entityId;
+
+			// axes
+			Vector3 ax;
+			Vector3 ay;
+			Vector3 az;
+			util::anglesToAxes(rot, ax, ay, az);
+
+			float newMatrix[4][4] = {
+				{ ax.x, ay.x, az.x },
+				{ ax.y, ay.y, az.y },
+				{ ax.z, ay.z, az.z },
+				{pos.x, pos.y, pos.z }
+			};
+
+			memcpy(this->viewMatrix, newMatrix, sizeof(newMatrix));
+		}
+
+		void updatePosition(Vector3 pos, Vector3 rot) {
+			this->pos = pos;
+			this->rot = rot;
+
+			// axes
+			Vector3 ax;
+			Vector3 ay;
+			Vector3 az;
+			util::anglesToAxes(rot, ax, ay, az);
+			float newMatrix[4][4] = {
+				{ ax.x, ay.x, az.x },
+				{ ax.y, ay.y, az.y },
+				{ ax.z, ay.z, az.z },
+				{ pos.x, pos.y, pos.z }
+			};
+
+			memcpy(this->viewMatrix, newMatrix, sizeof(newMatrix));
+		}
+	};
 }

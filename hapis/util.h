@@ -89,5 +89,40 @@ namespace util
 		}
 	};
 
+	// http://www.songho.ca/opengl/gl_anglestoaxes.html
+	void anglesToAxes(const Rust::Vector3 angles, Rust::Vector3& left, Rust::Vector3& up, Rust::Vector3& forward)
+	{
+		const float DEG2RAD = 3.141593f / 180;
+		float sx, sy, sz, cx, cy, cz, theta;
 
+		// rotation angle about X-axis (pitch)
+		theta = angles.x * DEG2RAD;
+		sx = sinf(theta);
+		cx = cosf(theta);
+
+		// rotation angle about Y-axis (yaw)
+		theta = angles.y * DEG2RAD;
+		sy = sinf(theta);
+		cy = cosf(theta);
+
+		// rotation angle about Z-axis (roll)
+		theta = angles.z * DEG2RAD;
+		sz = sinf(theta);
+		cz = cosf(theta);
+
+		// determine left axis
+		left.x = cy*cz;
+		left.y = sx*sy*cz + cx*sz;
+		left.z = -cx*sy*cz + sx*sz;
+
+		// determine up axis
+		up.x = -cy*sz;
+		up.y = -sx*sy*sz + cx*cz;
+		up.z = cx*sy*sz + sx*cz;
+
+		// determine forward axis
+		forward.x = sy;
+		forward.y = -sx*cy;
+		forward.z = cx*cy;
+	}
 }

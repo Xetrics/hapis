@@ -1,4 +1,5 @@
 #include "overlay.h"
+#include "main.h"
 
 namespace Overlay {
 	int width = GetSystemMetrics(SM_CXSCREEN);
@@ -35,7 +36,6 @@ namespace Overlay {
 	}
 	/* ========================================================= */
 
-
 	void render() {
 		if (tHwnd == GetForegroundWindow()) {
 			char * value = OVERLAY_TARGET;
@@ -48,10 +48,15 @@ namespace Overlay {
 			p_Device->Clear(0, 0, D3DCLEAR_TARGET, 0, 1.0f, 0);
 			p_Device->BeginScene();
 
-			//Drawing Stuff
+			// watermark
 			ID3DXFont* pFont;
 			D3DXCreateFont(p_Device, 20, 0, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Arial", &pFont);
 			DrawString("hapis.exe", 25, 10, 255, 255, 255, 255, pFont);
+
+			// draw esp boxes
+			/*for (auto& player : players) {
+				printf("%d @ %f, %f, %f\n", player.first, player.second.x, player.second.y, player.second.z);
+			}*/
 
 			p_Device->EndScene();
 			p_Device->PresentEx(0, 0, 0, 0, 0);
@@ -75,7 +80,7 @@ namespace Overlay {
 				MoveWindow(hwnd, tSize.left, tSize.top, width, height, TRUE);
 			}
 
-			Sleep(0);
+			Sleep(500);
 		}
 	}
 
@@ -160,7 +165,7 @@ namespace Overlay {
 				DispatchMessage(&Message);
 				TranslateMessage(&Message);
 			}
-			Sleep(0);
+			Sleep(1);
 		}
 	}
 }
