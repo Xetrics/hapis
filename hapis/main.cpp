@@ -8,6 +8,7 @@
 #include "server.h"
 #include "overlay.h"
 #include "message.h"
+#include "protos\main.pb.h"
 
 void OnRustPacketReceived(Proxy::Client* client, unsigned char* data, uint32_t size)
 {
@@ -36,17 +37,46 @@ void OnRustPacketReceived(Proxy::Client* client, unsigned char* data, uint32_t s
 	}
 	else if (data[0] == Rust::MessageType::Entities)
 	{
-		printf("Entities packet, type: %d, num: %d\nBytes: ", data[5], *(int*)(data + 1));
+		printf("Entities packet, num: %d, ", *(int*)(data + 1));
 
-		std::string str;
-		for (int i = 0; i < size; i++)
-		{
-			char buffer[2] = { 0 };
-			sprintf(buffer, "%02X", data[i]);
-			str = str + buffer + " ";
+		std::string strdata;
+		strdata.append((const char*)(data + 5), size - 5);
+
+		Entity entity;
+		entity.ParseFromString(strdata);
+
+		printf("group: %d, uid: %d, name: %s\n",
+			entity.has_basenetworkable() ? entity.basenetworkable().group() : -1,
+			entity.has_basenetworkable() ? entity.basenetworkable().uid() : -1,
+			entity.has_baseplayer() ? entity.baseplayer().name().c_str() : "(not a player)");
+	}
+	else if (data[0] == Rust::MessageType::Approved)
+	{
+		std::string strdata;
+		strdata.append((const char*)(data + 1), size - 1);
+
+		Approval approval;
+		
+		try {
+			approval.ParseFromString(strdata);
+			printf("Approval packet received!\n"
+				"\t- level: %s\n"
+				"\t- seed: %d\n"
+				"\t- size: %d\n",
+				approval.level().c_str(), approval.levelseed(), approval.levelsize());
 		}
-
-		printf("%s\n", str.c_str());
+		catch (google::protobuf::FatalException e)
+		{
+			printf("Fatal exception occured: %s\n", e.what());
+		}
+		catch (std::exception e)
+		{
+			printf("Exception occured: %s\n", e.what());
+		}
+		catch (...)
+		{
+			printf("Crash occured\n");
+		}
 	}
 }
 
