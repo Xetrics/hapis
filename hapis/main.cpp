@@ -9,7 +9,11 @@
 #include "server.h"
 #include "overlay.h"
 #include "message.h"
+#include "main.h"
 #include "protos\main.pb.h"
+
+std::unordered_map<int, Rust::Vector3> players;
+Rust::LocalPlayer* localPlayer;
 
 void OnRustPacketReceived(Proxy::Client* client, unsigned char* data, uint32_t size)
 {
@@ -17,10 +21,10 @@ void OnRustPacketReceived(Proxy::Client* client, unsigned char* data, uint32_t s
 	{
 		//Rust::EntityPositionMessage* message = (Rust::EntityPositionMessage*)Rust::Message::MessageFromPacket(client->pointer, data, size);
 
-		/*Rust::EntityPositionMessage message;
+		Rust::EntityPositionMessage message;
 		message.Deserialize(client->pointer);
 
-		printf("EntityPosition packet received!\n\t- Entity ID: %d\n\t- Position: %f, %f, %f\n\t- Rotation: %f, %f, %f\n",
+		/*printf("EntityPosition packet received!\n\t- Entity ID: %d\n\t- Position: %f, %f, %f\n\t- Rotation: %f, %f, %f\n",
 			message.entity_id,
 			message.position.x, message.position.y, message.position.z,
 			message.rotation.x, message.rotation.y, message.rotation.z);*/
@@ -28,6 +32,14 @@ void OnRustPacketReceived(Proxy::Client* client, unsigned char* data, uint32_t s
 		//*(float*)(data + 5) = -25.8;
 		//*(float*)(data + 9) = 16;
 		//*(float*)(data + 13) = -155.4;
+
+		auto entity = players.find(message.entity_id);
+		if (entity != players.end()) {
+			players[message.entity_id] = Rust::Vector3{ message.position.x, message.position.y, message.position.z };
+		
+			if (localPlayer->entityId = message.entity_id)
+				localPlayer->updatePosition(message.position, message.rotation);
+		}
 	}
 	else if (data[0] == Rust::MessageType::ConsoleCommand)
 	{
@@ -38,7 +50,7 @@ void OnRustPacketReceived(Proxy::Client* client, unsigned char* data, uint32_t s
 	}
 	else if (data[0] == Rust::MessageType::Entities)
 	{
-		printf("Entities packet, num: %d, ", *(int*)(data + 1));
+		//printf("Entities packet, num: %d, ", *(int*)(data + 1));
 
 		std::string strdata;
 		strdata.append((const char*)(data + 5), size - 5);
@@ -46,10 +58,13 @@ void OnRustPacketReceived(Proxy::Client* client, unsigned char* data, uint32_t s
 		Entity entity;
 		entity.ParseFromString(strdata);
 
-		printf("group: %d, uid: %d, name: %s\n",
-			entity.has_basenetworkable() ? entity.basenetworkable().group() : -1,
-			entity.has_basenetworkable() ? entity.basenetworkable().uid() : -1,
-			entity.has_baseplayer() ? entity.baseplayer().name().c_str() : "(not a player)");
+		if (entity.has_baseplayer() && entity.has_basenetworkable()) {
+			//printf("Got entity packet for player %s, entity id: %d\n", entity.baseplayer().name().c_str(), entity.basenetworkable().uid());
+			players[entity.basenetworkable().uid()] = Rust::Vector3{ 0, 0, 0 };
+
+			if (entity.baseplayer().has_metabolism)
+				localPlayer = new Rust::LocalPlayer(Rust::Vector3{ 0,0,0 }, Rust::Vector3{ 0,0,0 }, entity.basenetworkable().uid());
+		}
 	}
 	else if (data[0] == Rust::MessageType::Approved)
 	{
@@ -88,9 +103,7 @@ void OnRustPacketSent(Proxy::Server* server, unsigned char* data, uint32_t size)
 
 int main(int argc, const char* argv[])
 {
-	// nathan fix ur overlay it uses like 50000000000% cpu
-	// CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)Overlay::Init, NULL, NULL, NULL);
-	// Overlay::DrawFilledRectangle(0, 0, 25, 25, 1, 255, 255, 255);
+	CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)Overlay::Init, NULL, NULL, NULL);
 
 	std::string target_ip;
 	int target_port;
