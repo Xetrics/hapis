@@ -1,4 +1,5 @@
 #include "stringpool.h"
+#include <stdio.h>
 
 namespace Rust
 {
