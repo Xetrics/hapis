@@ -60,6 +60,9 @@
     <ClCompile Include="protos\main.pb.cc">
       <Filter>Source Files\protos</Filter>
     </ClCompile>
+    <ClCompile Include="stringpool.cpp">
+      <Filter>Source Files\rust</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="md5.h">
@@ -91,6 +94,9 @@
     </ClInclude>
     <ClInclude Include="protos\main.pb.h">
       <Filter>Header Files\protos</Filter>
+    </ClInclude>
+    <ClInclude Include="stringpool.h">
+      <Filter>Header Files\rust</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

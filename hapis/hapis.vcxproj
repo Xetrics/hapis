@@ -128,6 +128,7 @@
     <ClCompile Include="protos\main.pb.cc" />
     <ClCompile Include="rrapi.cpp" />
     <ClCompile Include="server.cpp" />
+    <ClCompile Include="stringpool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="client.h" />
@@ -139,6 +140,7 @@
     <ClInclude Include="protos\main.pb.h" />
     <ClInclude Include="rrapi.h" />
     <ClInclude Include="server.h" />
+    <ClInclude Include="stringpool.h" />
     <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>

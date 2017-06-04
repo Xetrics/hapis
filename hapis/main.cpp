@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 #include "rrapi.h"
+#include "stringpool.h"
 #include "server.h"
 #include "overlay.h"
 #include "message.h"
@@ -108,6 +109,7 @@ int main(int argc, const char* argv[])
 	try
 	{
 		Rust::API::Init();
+		Rust::InitializeStringPool();
 
 		Proxy::Server* server = new Proxy::Server(target_ip, target_port);
 		server->Start();
