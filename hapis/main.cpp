@@ -38,6 +38,8 @@ void OnRustPacketReceived(Proxy::Client* client, unsigned char* data, uint32_t s
 		Entity entity;
 		entity.ParseFromString(strdata);
 
+		printf("Entities packet received! Entity: %s\n", Rust::StringPool::GetShortened(entity.basenetworkable().prefabid()).c_str());
+
 		if (entity.has_baseplayer() && entity.has_basenetworkable()) {
 			players[entity.basenetworkable().uid()] = Rust::Vector3{ 0, 0, 0 };
 			 
@@ -87,7 +89,7 @@ int main(int argc, const char* argv[])
 	try
 	{
 		Rust::API::Init();
-		Rust::InitializeStringPool();
+		Rust::StringPool::Initialize();
 
 		Proxy::Server* server = new Proxy::Server(target_ip, target_port);
 		server->Start();
