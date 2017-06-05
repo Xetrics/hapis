@@ -13,6 +13,8 @@
 #include "drawing.h"
 
 #define OVERLAY_TARGET "Rust" /* window name */
+#define CROSSHAIR_THICKNESS 20
+#define CROSSHAIR_WIDTH 2
 
 namespace Overlay {
 	void Init();

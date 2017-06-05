@@ -6,6 +6,7 @@
 #include "client.h"
 #include "server.h"
 #include "LocalPlayer.h"
+#include "settings.h"
 
 // entity_id, position
 extern std::unordered_map<int, Rust::Vector3> players;

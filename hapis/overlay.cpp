@@ -30,6 +30,13 @@ namespace Overlay {
 			ID3DXFont* pFont;
 			D3DXCreateFont(p_Device, 20, 0, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Arial", &pFont);
 			Drawing::DrawString("hapis.exe", 25, 10, 255, 255, 255, 255, pFont);
+			
+
+			/* Draw Crosshair */
+			if (settings->crosshair) {
+				Drawing::DrawFilledRectangle(p_Device, (width / 2) - (CROSSHAIR_THICKNESS / 2), (height / 2) - (CROSSHAIR_WIDTH / 2), CROSSHAIR_THICKNESS, CROSSHAIR_WIDTH, 255, 0, 255, 0);
+				Drawing::DrawFilledRectangle(p_Device, (width / 2) - (CROSSHAIR_WIDTH / 2), (height / 2) - (CROSSHAIR_THICKNESS / 2), CROSSHAIR_WIDTH, CROSSHAIR_THICKNESS, 255, 0, 255, 0);
+			}
 
 			/* Draw ESP Boxes */
 			for (auto player : players) {
@@ -51,18 +58,17 @@ namespace Overlay {
 			tHwnd = FindWindow(FALSE, OVERLAY_TARGET);
 			if (tHwnd)
 			{
-				GetWindowRect(tHwnd, &tSize);
-				width = tSize.right - tSize.left;
-				height = tSize.bottom - tSize.top;
-				DWORD dwStyle = GetWindowLong(tHwnd, GWL_STYLE);
-				if (dwStyle & WS_BORDER)
-				{
-					tSize.top += 23;
-					height -= 23;
-				}
-				MoveWindow(hwnd, tSize.left, tSize.top, width, height, TRUE);
+					GetWindowRect(tHwnd, &tSize);
+					width = tSize.right - tSize.left;
+					height = tSize.bottom - tSize.top;
+					DWORD dwStyle = GetWindowLong(tHwnd, GWL_STYLE);
+					if (dwStyle & WS_BORDER)
+					{
+						tSize.top += 23;
+						height -= 23;
+					}
+					MoveWindow(hwnd, tSize.left, tSize.top, width, height, TRUE);
 			}
-
 			Sleep(500);
 		}
 	}
@@ -114,7 +120,7 @@ namespace Overlay {
 
 		WNDCLASSEX wClass;
 		wClass.cbClsExtra = NULL;
-		wClass.cbSize = sizeof(WNDCLASSEX);
+		wClass.cbSize = sizeof(WND	CLASSEX);
 		wClass.cbWndExtra = NULL;
 		wClass.hbrBackground = (HBRUSH)CreateSolidBrush(RGB(0, 0, 0));
 		wClass.hCursor = LoadCursor(0, IDC_ARROW);
@@ -129,7 +135,9 @@ namespace Overlay {
 		if (!RegisterClassEx(&wClass))
 			printf("[Overlay] failed to register window class");
 
-		tHwnd = FindWindow(NULL, OVERLAY_TARGET);
+		while (!FindWindow(FALSE, OVERLAY_TARGET)) { Sleep(20); }
+
+		tHwnd = FindWindow(FALSE, OVERLAY_TARGET);
 
 		if (tHwnd) {
 			GetWindowRect(tHwnd, &tSize);
@@ -149,7 +157,6 @@ namespace Overlay {
 				DispatchMessage(&Message);
 				TranslateMessage(&Message);
 			}
-			Sleep(1);
 		}
 	}
 }
