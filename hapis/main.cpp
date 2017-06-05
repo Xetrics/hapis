@@ -7,6 +7,7 @@
 #include "rrapi.h"
 #include "stringpool.h"
 #include "server.h"
+#include "settings.h"
 #include "overlay.h"
 #include "message.h"
 #include "main.h"
@@ -14,6 +15,7 @@
 
 std::unordered_map<int, Rust::Vector3> players;
 Rust::LocalPlayer* localPlayer;
+Settings* settings = new Settings();
 
 void OnRustPacketReceived(Proxy::Client* client, unsigned char* data, uint32_t size)
 {

@@ -8,9 +8,8 @@ void Drawing::DrawString(char* String, int x, int y, int a, int r, int g, int b,
 }
 
 void Drawing::DrawFilledRectangle(IDirect3DDevice9Ex* p_Device, float x, float y, float w, float h, int a, int r, int g, int b) {
-	D3DCOLOR color = D3DCOLOR_ARGB(a, r, g, b);
-	D3DRECT rect = { x, y, w, h };
-	p_Device->Clear(1, &rect, D3DCLEAR_TARGET | D3DCLEAR_TARGET, color, 0, 0);
+	D3DRECT rec = { x, y, x + w, y + h };
+	p_Device->Clear(1, &rec, D3DCLEAR_TARGET | D3DCLEAR_TARGET, D3DCOLOR_ARGB(a, r, g, b), 0, 0);
 }
 
 
