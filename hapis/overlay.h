@@ -15,6 +15,7 @@
 #define OVERLAY_TARGET "Rust" /* window name */
 #define CROSSHAIR_THICKNESS 20
 #define CROSSHAIR_WIDTH 2
+#define WINDOW_ADJUST_RATE 100
 
 namespace Overlay {
 	void Init();

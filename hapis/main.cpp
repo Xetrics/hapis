@@ -63,6 +63,13 @@ void OnRustPacketReceived(Proxy::Client* client, unsigned char* data, uint32_t s
 			"\t- size: %d\n",
 			approval.level().c_str(), approval.levelseed(), approval.levelsize());
 	}
+	else if (data[0] == Rust::MessageType::ConsoleCommand)
+	{
+		Rust::ConsoleCommandMessage message;
+		message.Deserialize(client->pointer);
+
+		//printf("%s\n", message.command.c_str());
+	}
 }
 
 void OnRustPacketSent(Proxy::Server* server, unsigned char* data, uint32_t size)

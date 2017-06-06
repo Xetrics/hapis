@@ -8,29 +8,25 @@ namespace Overlay {
 	HWND hwnd;
 	HWND tHwnd;
 	RECT tSize;
-	RECT rc;
 
 	IDirect3D9Ex* p_Object;
 	IDirect3DDevice9Ex* p_Device;
 	D3DPRESENT_PARAMETERS p_Params;
+	ID3DXFont* Font;
 
 	void render() {
-		if (tHwnd == GetForegroundWindow()) {
-			char* value = OVERLAY_TARGET;
-
-			HWND newhwnd = FindWindow(NULL, value);
-			if (newhwnd != NULL) {
-				GetWindowRect(newhwnd, &rc);
-			}
-
+		if (GetForegroundWindow() == tHwnd)
+		{
 			p_Device->Clear(0, 0, D3DCLEAR_TARGET, 0, 1.0f, 0);
 			p_Device->BeginScene();
 
 			/* Draw Watermark */
-			ID3DXFont* pFont;
-			D3DXCreateFont(p_Device, 20, 0, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Arial", &pFont);
-			Drawing::DrawString("hapis.exe", 25, 10, 255, 255, 255, 255, pFont);
-			
+			Drawing::DrawString("hapis.exe", 25, 10, 255, 255, 255, 255, Font);
+			Drawing::DrawFormattedString("width: %d", 25, 35, 255, 255, 255, 255, Font, width);
+			Drawing::DrawFormattedString("height: %d", 25, 60, 255, 255, 255, 255, Font, height);
+			Drawing::DrawFormattedString("players: %d", 25, 85, 255, 255, 255, 255, Font, players.size());
+			if (localPlayer) Drawing::DrawFormattedString("pos: %f, %f, %f", 25, 110, 255, 255, 255, 255, Font, localPlayer->pos.x, localPlayer->pos.y, localPlayer->pos.z);
+			if (localPlayer) Drawing::DrawFormattedString("rot: %f, %f, %f", 25, 135, 255, 255, 255, 255, Font, localPlayer->rot.x, localPlayer->rot.y, localPlayer->rot.z);
 
 			/* Draw Crosshair */
 			if (settings->crosshair) {
@@ -42,8 +38,8 @@ namespace Overlay {
 			for (auto player : players) {
 				Rust::Vector3 pos;
 				bool visible = Math::WorldToScreen(player.second, pos, localPlayer->viewMatrix, width, height);
-
-				if (visible)  Drawing::DrawString("player", pos.x, pos.y, 255, 255, 255, 255, pFont);
+				Drawing::DrawString("player", pos.x, pos.y, 255, 255, 255, 255, Font);
+				//if (visible)  Drawing::DrawString("player", pos.x, pos.y, 255, 255, 255, 255, Font);
 			}
 
 			/* Draw Scene */
@@ -54,22 +50,29 @@ namespace Overlay {
 
 	/* Moves the invisible window to the position and size of Rust */
 	void setWindowToTarget() {
-		for(;;) {
+		for (;;) {
 			tHwnd = FindWindow(FALSE, OVERLAY_TARGET);
 			if (tHwnd)
 			{
-					GetWindowRect(tHwnd, &tSize);
-					width = tSize.right - tSize.left;
-					height = tSize.bottom - tSize.top;
-					DWORD dwStyle = GetWindowLong(tHwnd, GWL_STYLE);
-					if (dwStyle & WS_BORDER)
-					{
-						tSize.top += 23;
-						height -= 23;
-					}
-					MoveWindow(hwnd, tSize.left, tSize.top, width, height, TRUE);
+				GetWindowRect(tHwnd, &tSize);
+				width = tSize.right - tSize.left;
+				height = tSize.bottom - tSize.top;
+				DWORD dwStyle = GetWindowLong(tHwnd, GWL_STYLE);
+				if (dwStyle & WS_BORDER)
+				{
+					tSize.top += 23;
+					height -= 23;
+				}
+				MoveWindow(hwnd, tSize.left, tSize.top, width, height, TRUE);
+				ShowWindow(hwnd, SW_SHOW);
 			}
-			Sleep(500);
+
+			if (GetForegroundWindow() == tHwnd)
+				ShowWindow(hwnd, SW_SHOW);
+			else
+				ShowWindow(hwnd, SW_HIDE);
+
+			Sleep(WINDOW_ADJUST_RATE);
 		}
 	}
 
@@ -89,6 +92,8 @@ namespace Overlay {
 
 		if (FAILED(p_Object->CreateDeviceEx(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd, D3DCREATE_HARDWARE_VERTEXPROCESSING, &p_Params, 0, &p_Device)))
 			printf("[Overlay] Failed to create create DX device");
+
+		D3DXCreateFont(p_Device, 20, 0, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Arial", &Font);
 	}
 
 	/* Fuck WinAPI */
@@ -120,7 +125,7 @@ namespace Overlay {
 
 		WNDCLASSEX wClass;
 		wClass.cbClsExtra = NULL;
-		wClass.cbSize = sizeof(WND	CLASSEX);
+		wClass.cbSize = sizeof(WNDCLASSEX);
 		wClass.cbWndExtra = NULL;
 		wClass.hbrBackground = (HBRUSH)CreateSolidBrush(RGB(0, 0, 0));
 		wClass.hCursor = LoadCursor(0, IDC_ARROW);
