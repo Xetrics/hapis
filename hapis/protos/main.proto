@@ -1,0 +1,553 @@
+// Rust .proto spec
+// Tediously written and reversed by Austin
+// btw this took me like 8 hours
+// 6/3/2017
+
+message Vector3Serialized {
+	required float x = 1;
+	required float y = 2;
+	required float z = 3;
+}
+
+message RaySerialized {
+	required Vector3Serialized origin = 1;
+	required Vector3Serialized direction = 2;
+}
+
+message BaseNetworkable {
+    required uint32 uid = 1;
+    required uint32 group = 2;
+    required uint32 prefabID = 3;
+}
+
+message BaseEntity {
+	required Vector3Serialized pos = 1;
+	required Vector3Serialized rot = 2;
+	required uint64 flags = 3;
+	optional uint64 skinid = 4;
+}
+
+message Item {
+
+	message InstanceData {
+		required uint64 dataInt = 1;
+		required uint64 blueprintTarget = 2;
+		required uint64 blueprintAmount = 3;
+	}
+
+	message ConditionData {
+		required float condition = 1;
+		required float maxCondition = 2;
+	}
+
+	required uint32 UID = 1;
+	required uint64 itemid = 2;
+	required uint64 slot = 3;
+	required uint64 amount = 4;
+	required uint64 flags = 5;
+	required float removetime = 6;
+	required float locktime = 7;
+	required uint32 worldEntity = 8;
+	optional InstanceData instanceData = 9;
+	required uint32 heldEntity = 10;
+	optional ConditionData conditionData = 11;
+	optional string name = 14;
+	optional string text = 15;
+	required uint64 skinid = 16;
+	optional ItemContainer contents = 100;
+}
+
+message ItemContainer {
+	required uint32 UID = 1;
+	required uint64 slots = 2;
+	required float temperature = 3;
+	required uint64 flags = 4;
+	required uint64 allowedContents = 5;
+	required uint64 maxStackSize = 6;
+	required uint64 allowedItem = 7;
+	repeated uint64 availableSlots = 8;
+	repeated Item contents = 100; 
+}
+
+message PlayerInventory {
+	optional ItemContainer invMain = 1;
+	optional ItemContainer invBelt = 2;
+	optional ItemContainer invWear = 4;
+}
+
+message PlayerMetabolism {
+	required float health = 1;
+	required float calories = 2;
+	required float hydration = 3;
+	required float heartrate = 4;
+	required float temperature = 5;
+	required float poison = 6;
+	required float radiation_level = 7;
+	required float wetness = 8;
+	required float dirtyness = 9;
+	required float oxygen = 10;
+	required float bleeding = 11;
+	required float radiation_poisoning = 12;
+	required float comfort = 13;
+	required float pending_health = 14;
+}
+
+message ModelState {
+	required float waterLevel = 4;
+	required Vector3Serialized lookDir = 10;
+	required uint64 flags = 11;
+}
+
+message PersistantPlayer {
+	repeated uint64 unlockedItems = 3;
+	required uint64 protocolVersion = 100;
+}
+
+message PlayerLifeStory {
+
+	message DeathInfo {
+		optional string attackerName = 1;
+		required uint64 attackerSteamID = 2;
+		optional string hitBone = 3;
+		optional string inflictorName = 4; 
+		required uint64 lastDamageType = 5;
+	}
+
+	required float secondsAlive = 100;
+	required float metersWalked = 101;
+	required float metersRun = 102;
+	required float secondsSleeping = 103;
+	required uint32 timeBorn = 104;
+	required uint32 timeDead = 105;
+	optional DeathInfo deathInfo = 200;
+}
+
+message BasePlayer {
+	optional string name = 1;
+	required uint64 userid = 2;
+	optional PlayerInventory inventory = 3;
+	optional PlayerMetabolism metabolism = 4;
+	optional ModelState modelState = 6;
+	required uint64 playerFlags = 7;
+	required uint32 heldEntity = 8;
+	required float health = 9;
+	optional PersistantPlayer persistantData = 10;
+	required float skinCol = 15;
+	required float skinTex = 16;
+	required float skinMesh = 17;
+	optional PlayerLifeStory currentLife = 20;
+	optional PlayerLifeStory previousLife = 21;
+}
+
+message WorldItem {
+	optional Item item = 1;
+}
+
+message BaseResource {
+	required uint64 stage = 1;
+	required float health = 2;
+}
+
+message BuildingBlock {
+	required uint64 grade = 2;
+	required bool beingDemolished = 3;
+	required float stability = 4;
+	required uint32 buildingID = 5;
+}
+
+message Environment {
+	required uint64 dateTime = 1;
+	required float clouds = 2;
+	required float fog = 3;
+	required float wind = 4;
+	required float rain = 5;
+}
+
+message Corpse {
+	required uint32 parentID = 1;
+}
+
+message ParentInfo {
+	required uint32 uid = 1;
+	required uint32 bone = 2;
+}
+
+message KeyLock {
+	required uint64 code = 1;
+}
+
+message CodeLock {
+	
+	message Private {
+		optional string code = 1;
+		repeated uint64 users = 2;
+		repeated uint64 guests = 3;
+		optional string guestCode = 4;
+		repeated uint64 guestUsers = 5;
+	}
+
+	optional Private pv = 1;
+	required bool hasCode = 2;
+	required bool hasGuestCode = 3;
+}
+
+message EntitySlots {
+	required uint32 slotLock = 1;
+	required uint32 slotFireMod = 2;
+	required uint32 slotUpperModification = 3;
+}
+
+message PlayerNameID {
+	required string username = 1;
+	required uint64 userid = 2;
+}
+
+message BuildingPrivilege {
+	repeated PlayerNameID users = 1;
+}
+
+message StorageBox {
+	optional ItemContainer contents = 1;
+}
+
+message HeldEntity {
+	required uint32 itemUID = 1;
+}
+
+message Magazine {
+	required uint64 capacity = 1;
+	required uint64 contents = 2;
+	required uint64 ammoType = 3;
+}
+
+message BaseProjectile {
+	optional Magazine primaryMagazine = 1; 
+}
+
+message BaseNPC {
+	required uint64 flags = 2;
+}
+
+message Loot {
+	optional ItemContainer contents = 1;
+}
+
+message GenericSpawner {
+
+	message SpawnedEnt {
+		required uint32 uid = 1;
+		required uint32 spawnPointIndex = 2;
+		required bool mobile = 3;
+	}
+
+	repeated SpawnedEnt ents = 1;
+}
+
+message SleepingBag {
+	
+	message Private {
+		required uint64 deployerID = 1;
+		optional string deployerName = 2;
+	}
+
+	optional string name = 1;
+	optional Private privateData = 2;
+	required uint64 deployerID = 3;
+}
+
+message LootableCorpse {
+	
+	message Private {
+		repeated ItemContainer container = 1;
+	}
+
+	optional Private privateData = 1;
+	required uint64 playerID = 2;
+	optional string playerName = 3;
+}
+
+message Sign {
+	required uint32 imageid = 3;
+}
+
+message BaseCombat {
+	required uint64 state = 1;
+	required float health = 2;
+}
+
+message MapEntity {
+	repeated uint32 fogImages = 1;
+	repeated uint32 paintImages = 2;
+}
+
+message ResearchTable {
+	required float researchTimeLeft = 1;
+}
+
+message DudExplosive {
+	required float fuseTimeLeft = 1;
+}
+
+message ResourceExtractor {
+	optional ItemContainer fuelContents = 1;
+	optional ItemContainer outputContents = 2;
+}
+
+message MiningQuarry {
+	optional ResourceExtractor extractor = 1;
+}
+
+message PlantEntity {
+	required uint64 state = 1;
+	required float age = 2;
+	required uint64 genetics = 3;
+	required uint64 water = 4;
+	required float healthy = 5;
+}
+
+message Helicopter {
+	required Vector3Serialized tiltRot = 1;
+	required Vector3Serialized leftGun = 2;
+	required Vector3Serialized rightGun = 3;
+	required Vector3Serialized spotlightVec = 4;
+	repeated float weakspothealths = 5;
+}
+
+message Landmine {
+	required uint64 triggeredID = 1;
+}
+
+message AutoTurret {
+	required Vector3Serialized aimPos = 1;
+	required Vector3Serialized aimDir = 2;
+	required uint32 targetID = 3;
+	repeated PlayerNameID users = 4;
+}
+
+message SphereEntity {
+	required float radius = 1;
+}
+
+message StabilityEntity {
+	required float stability = 1;
+	required uint64 distanceFromGround = 2;
+}
+
+message OwnerInfo {
+	required uint64 steamid = 1;
+}
+
+message DecayEntity {
+	required float decayTimer = 1;
+}
+
+message Spawnable {
+	required uint32 population = 1;
+}
+
+message ServerGib {
+	optional string gibName = 1;
+}
+
+message VendingMachine {
+	
+	message SellOrder {
+		required uint64 itemToSellID = 1;
+		required uint64 itemToSellAmount = 2;
+		required uint64 currencyID = 3;
+		required uint64 currencyAmountPerItem = 4;
+		required uint64 inStock = 5;
+	}
+
+	message SellOrderContainer {
+		repeated SellOrder sellOrders = 1;
+	}
+
+	optional SellOrderContainer sellOrderContainer = 1;
+	optional string shopName = 2;
+}
+
+message SpinnerWheel {
+	required Vector3Serialized spin = 1;
+}
+
+message Entity {
+	optional BaseNetworkable baseNetworkable = 1;
+	optional BaseEntity baseEntity = 2;
+	optional BasePlayer basePlayer = 3;
+	optional WorldItem worldItem = 4;
+	optional BaseResource resource = 5;
+	optional BuildingBlock buildingBlock = 6;
+	optional Environment environment = 7;
+	optional Corpse corpse = 8;
+	optional ParentInfo parent = 10;
+	optional KeyLock keyLock = 11;
+	optional CodeLock codeLock = 12;
+	optional EntitySlots entitySlots = 13;
+	optional BuildingPrivilege buildingPrivilege = 14;
+	optional StorageBox storageBox = 15;
+	optional HeldEntity heldEntity = 16;
+	optional BaseProjectile baseProjectile = 17;
+	optional BaseNPC baseNPC = 18;
+	optional Loot loot = 19;
+	optional GenericSpawner genericSpawner = 20;
+	optional SleepingBag sleepingBag = 21;
+	optional LootableCorpse lootableCorpse = 22;
+	optional Sign sign = 23; 
+	optional BaseCombat baseCombat = 24;
+	optional MapEntity mapEntity = 25;
+	optional ResearchTable researchTable = 26;
+	optional DudExplosive dudExplosive = 27;
+	optional MiningQuarry miningQuarry = 28;
+	optional PlantEntity plantEntity = 29;
+	optional Helicopter helicopter = 30;
+	optional Landmine landmine = 31;
+	optional AutoTurret autoturret = 32;
+	optional SphereEntity sphereEntity = 33;
+	optional StabilityEntity stabilityEntity = 34;
+	optional OwnerInfo ownerInfo = 35;
+	optional DecayEntity decayEntity = 36;
+	optional Spawnable spawnable = 37;
+	optional ServerGib servergib = 38;
+	optional VendingMachine vendingMachine = 39;
+	optional SpinnerWheel spinnerWheel = 40;
+	required bool createdThisFrame = 100;
+}
+
+message Approval {
+	required string level = 2;
+	optional string hostname = 3;
+	required bool modded = 4;
+	required bool official = 5;
+	required uint64 steamid = 6;
+	required uint32 ipaddress = 7;
+	required uint64 port = 8;
+	required uint32 levelSeed = 9;
+	required uint32 levelSize = 10;
+	optional string checksum = 11;
+}
+
+message Attack {
+	required Vector3Serialized pointStart = 1;
+	required Vector3Serialized pointEnd = 2;
+	required uint32 hitID = 3;
+	required uint32 hitBone = 4; 
+	required Vector3Serialized hitNormalLocal = 5;
+	required Vector3Serialized hitPositionLocal = 6;
+	required Vector3Serialized hitNormalWorld = 7;
+	required Vector3Serialized hitPositionWorld = 8;
+	required uint32 hitPartID = 9;
+	required uint32 hitMaterialID = 10;
+	required uint32 hitItem = 11;
+}
+
+message ClientReady {
+
+	message ClientInfo {
+		required string name = 1;
+		required string value = 2;
+	}
+
+	repeated ClientInfo clientInfo = 1;
+}
+
+message CreateBuilding {
+	required uint32 entity = 1;
+	required uint32 socket = 2;
+	required bool onterrain = 3;
+	required Vector3Serialized position = 4;
+	required Vector3Serialized normal = 5;
+	required RaySerialized ray = 6;
+	required uint32 blockID = 7;
+	required Vector3Serialized rotation = 8;
+}
+
+// TODO: DemoHeader message 
+
+message EntityList {
+	repeated Entity entity = 1;
+}
+
+message ModuleMessage {
+	required uint32 itemid = 1;
+	required uint64 moduleid = 2;
+	required uint64 type = 3;
+	optional bytes data = 4; 
+}
+
+message PlayerAttack {
+	required Attack attack = 1;
+	required uint64 projectileID = 2;
+}
+
+message PlayerProjectileAttack {
+	required PlayerAttack playerAttack = 1;
+	required Vector3Serialized hitVelocity = 2;
+	required float hitDistance = 3;
+}
+
+message PlayerProjectileRicochet {
+	required uint64 projectileID = 1;
+	required Vector3Serialized hitPosition = 2;
+	required Vector3Serialized inVelocity = 3;
+	required Vector3Serialized outVelocity = 4;
+}
+
+message PlayerProjectileUpdate {
+	required uint64 projectileID = 1;
+	required Vector3Serialized curPosition = 2;
+}
+
+message PlayerUpdateLoot {
+	required uint32 itemID = 1;
+	required uint32 entityID = 2;
+	repeated ItemContainer containers = 3;
+}
+
+message ProjectileShoot {
+
+	message Projectile {
+		required uint64 projectileID = 1;
+		required Vector3Serialized startPos = 2;
+		required Vector3Serialized startVel = 3;
+		required uint64 seed = 4;
+	}
+
+	required uint64 ammoType = 1;
+	repeated Projectile projectiles = 2;
+}
+
+message RespawnInformation {
+	
+	message SpawnOptions {
+		
+		enum RespawnType {
+			SleepingBag = 1;
+			Bed = 2;
+		}
+
+		required RespawnType type = 1;
+		required uint32 id = 2;
+		required string name = 3;
+		required float unlockSeconds = 4;
+	}
+
+	repeated SpawnOptions spawnOptions = 1;
+	optional PlayerLifeStory previousLife = 2;
+	required bool fadeIn = 3;
+}
+
+message TakeDamage {
+	required float amount = 1;
+	required Vector3Serialized direction = 2;
+	required uint64 type = 3;
+}
+
+message UpdateItem {
+	required Item item = 1;
+}
+
+message UpdateItemContainer {
+	required uint64 type = 1;
+	repeated ItemContainer container = 2;
+}
