@@ -14,16 +14,13 @@ namespace Proxy {
 
 	class Client
 	{
-	private:
-		util::athread thread;
-
 	public:
 		Client(std::string target_ip, int target_port, Proxy::Server* server);
 		~Client();
 		Client(const Client& other) = delete;
 
-		void Start();
 		void Send(unsigned char* data, uint32_t size);
+		uint32_t Tick();
 		void Close();
 		
 		Rust::API::RakPeer pointer;

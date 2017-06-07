@@ -5,71 +5,87 @@
 
 void ListenThread(Proxy::Server* server)
 {
-	while (server->is_alive)
+	while (true)
 	{
-		while (Rust::API::NET_Receive(server->pointer))
+		uint32_t server_result = server->Tick();
+		if (server_result & TICK_DISCONNECT)
+			break; 
+
+		uint32_t client_result = server->client ? server->client->Tick() : 0;
+		if (client_result & TICK_DISCONNECT)
+			break;
+
+		if ((server_result & client_result) & TICK_NO_MORE_PACKETS) // neither the server nor client have any packets to process right now
+			Sleep(PROXY_TICK_MS);
+	}
+}
+
+uint32_t Proxy::Server::Tick()
+{
+	if (!this->is_alive)
+		return TICK_DISCONNECT;
+
+	if (!Rust::API::NET_Receive(this->pointer))
+		return TICK_NO_MORE_PACKETS;
+
+	uint32_t size = Rust::API::NETRCV_LengthBits(this->pointer) / 8;
+	unsigned char* data = (unsigned char*)Rust::API::NETRCV_RawData(this->pointer);
+
+	//printf("[Server] Packet received from client, ID: %d (%s), size: %d\n", data[0], Rust::Message::TypeToName((Rust::MessageType)data[0]), size);
+
+	switch (data[0])
+	{
+	case NEW_INCOMING_CONNECTION:
+	{
+		this->incoming_guid = Rust::API::NETRCV_GUID(this->pointer);
+
+		/* connect */
+		this->client = new Proxy::Client(this->target_ip, this->target_port, this);
+
+		/* wait for connection success packet */
+		while (!Rust::API::NET_Receive(this->client->pointer)) Sleep(10);
+
+		/* store the server we are connecting to's identifier */
+		this->client->incoming_guid = Rust::API::NETRCV_GUID(this->client->pointer);
+
+		/* check if we successfully connected */
+		unsigned char client_id = ((unsigned char*)Rust::API::NETRCV_RawData(this->client->pointer))[0];
+		if (client_id == CONNECTION_REQUEST_ACCEPTED)
 		{
-			uint32_t size = Rust::API::NETRCV_LengthBits(server->pointer) / 8;
-			unsigned char* data = (unsigned char*)Rust::API::NETRCV_RawData(server->pointer);
+			/* start receiving packets from the server */
+			this->client->is_connected = true;
 
-			//printf("[Server] Packet received from client, ID: %d (%s), size: %d\n", data[0], Rust::Message::TypeToName((Rust::MessageType)data[0]), size);
+			printf("[Client] Connected to game server: %s:%d\n", this->target_ip.c_str(), this->target_port);
 
-			switch (data[0])
-			{
-				case NEW_INCOMING_CONNECTION:
-				{
-					server->incoming_guid = Rust::API::NETRCV_GUID(server->pointer);
-
-					/* connect */
-					server->client = new Proxy::Client(server->target_ip, server->target_port, server);
-
-					/* wait for connection success packet */
-					while (!Rust::API::NET_Receive(server->client->pointer)) Sleep(10); 
-
-					/* store the server we are connecting to's identifier */
-					server->client->incoming_guid = Rust::API::NETRCV_GUID(server->client->pointer);
-
-					/* check if we successfully connected */
-					unsigned char client_id = ((unsigned char*)Rust::API::NETRCV_RawData(server->client->pointer))[0];
-					if (client_id == CONNECTION_REQUEST_ACCEPTED)
-					{
-						/* start receiving packets from the server */
-						server->client->is_connected = true;
-						server->client->Start();
-
-						printf("[Client] Connected to game server: %s:%d\n", server->target_ip.c_str(), server->target_port);
-
-						/* raknet should implicitly send a CONNECTION_REQUEST_ACCEPTED packet to the client, we don't have to do anything ? */
-					}
-					else
-					{
-						/* tell the client we couldn't connect to the server */
-						printf("[Client] Failed to connect to server, closing connection to client...\n");
-						server->Close();
-					}
-
-					break;
-				}
-				case ID_DISCONNECTION_NOTIFICATION: /* client told proxy that they're disconnecting */
-					printf("[Server] Disconnection notification received from client, disconnecting...\n");
-					server->client->Close(); /* send notification to game server */
-					server->Close();
-					return;
-				case ID_CONNECTION_LOST: /* client lost connection to proxy */
-					printf("[Server] Connection to client lost, disconnecting from game server and closing...\n");
-					/* stop 'client's receive loop and send ID_CONNECTION_LOST to game server */
-					server->client->is_connected = false;
-					server->client->Send(data, size);
-					server->Close();
-					return;
-				default:
-					OnRustPacketSent(server, data, size);
-					server->client->Send(data, size);
-			}
+			/* raknet should implicitly send a CONNECTION_REQUEST_ACCEPTED packet to the client, we don't have to do anything ? */
+		}
+		else
+		{
+			/* tell the client we couldn't connect to the server */
+			printf("[Client] Failed to connect to server, closing connection to client...\n");
+			this->Close();
 		}
 
-		Sleep(PROXY_TICK_MS);
+		break;
 	}
+	case ID_DISCONNECTION_NOTIFICATION: /* client told proxy that they're disconnecting */
+		printf("[Server] Disconnection notification received from client, disconnecting...\n");
+		this->client->Close(); /* send notification to game server */
+		this->Close();
+		return TICK_DISCONNECT;
+	case ID_CONNECTION_LOST: /* client lost connection to proxy */
+		printf("[Server] Connection to client lost, disconnecting from game server and closing...\n");
+		/* stop 'client's receive loop and send ID_CONNECTION_LOST to game server */
+		this->client->is_connected = false;
+		this->client->Send(data, size);
+		this->Close();
+		return TICK_DISCONNECT;
+	default:
+		OnRustPacketSent(this, data, size);
+		this->client->Send(data, size);
+	}
+
+	return 0;
 }
 
 Proxy::Server::Server(std::string target_ip, int target_port)
@@ -117,6 +133,6 @@ void Proxy::Server::Close()
 		this->pointer = 0;
 		this->is_alive = false;
 		this->incoming_guid = 0;
-		this->thread.terminate();
+		if (this->thread.running()) this->thread.terminate();
 	}
 }
