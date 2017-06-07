@@ -7,7 +7,7 @@
 
 #define CLIENT_MAX_RETRIES 32
 #define CLIENT_RETRY_DELAY 100
-#define CLIENT_TIMEOUT 100
+#define CLIENT_TIMEOUT 2500
 
 namespace Proxy {
 	class Server; // forward declaration

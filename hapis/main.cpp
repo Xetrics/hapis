@@ -3,6 +3,9 @@
 #include <inttypes.h>
 #include <string>
 #include <stdlib.h>
+#include <algorithm>
+#include <chrono>
+
 
 #include "rrapi.h"
 #include "stringpool.h"
@@ -13,9 +16,20 @@
 #include "main.h"
 #include "protos\main.pb.h"
 
+#define if_setting(set, code) { if(settings->set){ code; } }
+
 std::unordered_map<int, Rust::Vector3> players;
 Rust::LocalPlayer* localPlayer;
 Settings* settings = new Settings();
+
+int randomgen(int max, int min) // totally not skidded
+{
+	srand(time(NULL));
+	int random = rand() % max + min;
+	return random;
+}
+
+google::protobuf::int64 staticTime = 0;
 
 void OnRustPacketReceived(Proxy::Client* client, unsigned char* data, uint32_t size)
 {
@@ -24,13 +38,13 @@ void OnRustPacketReceived(Proxy::Client* client, unsigned char* data, uint32_t s
 		Rust::EntityPositionMessage message;
 		message.Deserialize(client->pointer);
 
-		auto entity = players.find(message.entity_id);
-		if (entity != players.end()) {
+		if (players.find(message.entity_id) != players.end()) {
 			players[message.entity_id] = Rust::Vector3{ message.position.x, message.position.y, message.position.z };
-
-			if (localPlayer->entityId = message.entity_id)
-				localPlayer->updatePosition(message.position, message.rotation);
 		}
+		else if (message.entity_id == localPlayer->entityId) {
+			localPlayer->updatePosition(message.position, message.rotation);
+		}
+
 	}
 	else if (data[0] == Rust::MessageType::Entities)
 	{
@@ -42,10 +56,39 @@ void OnRustPacketReceived(Proxy::Client* client, unsigned char* data, uint32_t s
 
 
 		if (entity.has_baseplayer() && entity.has_basenetworkable()) {
-			players[entity.basenetworkable().uid()] = Rust::Vector3{ 0, 0, 0 };
-
-			if (entity.baseplayer().has_metabolism())
+			if (entity.baseplayer().has_metabolism()) {
 				localPlayer = new Rust::LocalPlayer(Rust::Vector3{ 0, 0, 0 }, Rust::Vector3{ 0, 0, 0 }, entity.basenetworkable().uid());
+			}
+			else {
+				players[entity.basenetworkable().uid()] = Rust::Vector3{ 0, 0, 0 };
+			}
+		} else if (entity.has_environment()) {
+			Environment* env = new Environment(entity.environment());
+			//if (staticTime == 0)
+			//	staticTime = env->datetime();
+			//env->set_datetime(staticTime);
+
+			//printf("datetime: %llu\n", env->datetime());
+
+			if_setting(weather->always_day, env->set_datetime(5250201459021885585)); // lets hope this works 
+			if_setting(weather->no_fog, env->set_fog(0));
+			if_setting(weather->no_rain, env->set_rain(0));
+			if_setting(weather->no_clouds, env->set_clouds(0));
+			if_setting(weather->no_wind, env->set_wind(0));
+
+			entity.release_environment();
+			entity.set_allocated_environment(env);
+			std::string newEntityData = entity.SerializeAsString();
+			memcpy(data + 5, &newEntityData[0], newEntityData.size());
+		}
+	}
+	else if (data[0] == Rust::MessageType::EntityDestroy) {
+		Rust::EntityDestroyMessage message;
+		message.Deserialize(client->pointer);
+
+
+		if (players.find(message.entity_id) != players.end()) {
+			players.erase(message.entity_id);
 		}
 	}
 	else if (data[0] == Rust::MessageType::Approved)
@@ -67,7 +110,7 @@ void OnRustPacketReceived(Proxy::Client* client, unsigned char* data, uint32_t s
 		Rust::ConsoleCommandMessage message;
 		message.Deserialize(client->pointer);
 
-		//printf("%s\n", message.command.c_str());
+		printf("ConsoleCommand: %s\n", message.command.c_str());
 	}
 }
 

@@ -1,11 +1,26 @@
 #pragma once
 
+struct weather_settings {
+	bool always_day = false;
+	bool freeze_time = false;
+	bool no_fog = false;
+	bool no_rain = false;
+	bool no_clouds = false;
+	bool no_wind = false;
+};
 
 class Settings {
 public:
-	bool crosshair = true;
-	bool esp = true;
-	bool debug = true;
+	// Setting sub-categories
+	weather_settings* weather;
+
+	bool crosshair = false;
+	bool esp = false;
+	bool debug = false;
+
+	Settings() {
+		weather = new weather_settings();
+	}
 };
 
 extern Settings* settings;

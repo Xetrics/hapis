@@ -13,12 +13,11 @@ namespace Overlay {
 	D3DPRESENT_PARAMETERS p_Params;
 	ID3DXFont* Font;
 
-	ImVec4 clear_col = ImColor(114, 144, 154);
-	bool show_test_window = true;
-	bool show_another_window = false;
+	bool showGui = false;
 
 	void render() {
-		if (GetForegroundWindow() == tHwnd)
+		HWND fHwnd = GetForegroundWindow();
+		if (fHwnd == tHwnd || (fHwnd == hwnd && showGui))
 		{
 			p_Device->Clear(0, 0, D3DCLEAR_TARGET, 0, 1.0f, 0);
 			p_Device->BeginScene();
@@ -42,37 +41,70 @@ namespace Overlay {
 
 			/* Draw ESP Boxes */
 			if (settings->esp) {
-				for (int i = 0; i < players.size(); i++) {
+				Rust::Vector3 pos;
+				for (auto player : players) {
 					Rust::Vector3 pos;
-					//bool visible = Math::World2Screen(localPlayer->pos, localPlayer->rot, players.at(i), pos, height, width);
-					//Drawing::DrawFormattedString("%f, %f, %f", width - 200, (i + 10) * 25, 255, 255, 255, 255, Font, pos.x, pos.y, pos.z);
-					//if (visible)  Drawing::DrawString("player", pos.x, pos.y, 255, 255, 255, 255, Font);
+					bool visible = Math::World2Screen(localPlayer->pos, localPlayer->rot, FOV, { 0, 1.5f, 0 }, player.second, pos, width, height);
+					if (visible)
+						Drawing::DrawString("player", pos.x, pos.y, 255, 255, 255, 255, Font);
 				}
 			}
 
 			/* ImGui */
 			ImGui_ImplDX9_NewFrame();
 
-			ImGui::Begin("same", &show_test_window, ImVec2(300, 250), 0.75f);
-			{
-				if (ImGui::CollapsingHeader("Visuals")) {
-					ImGui::Checkbox("ESP Enabled", &show_test_window);
-					ImGui::Checkbox("Show Boxes", &show_test_window);
-					ImGui::Checkbox("Show Names", &show_test_window);
+			if (showGui) {
+				ImGui::Begin("Hapis", &showGui, ImVec2(300, 250), 0.75f);
+				{
+					if (ImGui::TreeNodeEx("Visuals", ImGuiTreeNodeFlags_CollapsingHeader)) {
+						ImGui::Checkbox("Crosshair", &settings->crosshair);
+						ImGui::Checkbox("ESP", &settings->esp);
+						if (ImGui::TreeNodeEx("Weather", ImGuiTreeNodeFlags_CollapsingHeader)) {
+							if(!settings->weather->freeze_time)
+								ImGui::Checkbox("Always Day", &settings->weather->always_day);
+							if(!settings->weather->always_day)
+								ImGui::Checkbox("Freeze Time", &settings->weather->freeze_time);
+							ImGui::Checkbox("No Rain", &settings->weather->no_rain);
+							ImGui::Checkbox("No Fog", &settings->weather->no_fog);
+							ImGui::Checkbox("No Clouds", &settings->weather->no_clouds);
+							ImGui::Checkbox("No Wind", &settings->weather->no_wind);
+							ImGui::TreePop();
+						}
+						ImGui::TreePop();
+					}
+					if (ImGui::TreeNodeEx("Misc", ImGuiTreeNodeFlags_CollapsingHeader)) {
+						ImGui::Checkbox("Debug Mode", &settings->debug);
+						ImGui::TreePop();
+					}
 				}
-				if (ImGui::CollapsingHeader("Misc")) {
-					ImGui::Checkbox("No Recoil", &show_test_window);
-					ImGui::Checkbox("Bunny Hop", &show_test_window);
-					ImGui::Checkbox("Auto-Accept", &show_test_window);
-				}
+				ImGui::End(); //End main window
 			}
-			ImGui::End(); //End main window
 
 			/* Draw Scene */
 			ImGui::Render();
 			p_Device->EndScene();
 			p_Device->PresentEx(0, 0, 0, 0, 0);
 		}
+
+	}
+
+
+	void ToggleGui() {
+		showGui = !showGui;
+
+		long style = GetWindowLong(hwnd, GWL_EXSTYLE);
+
+		if (showGui) {
+			style &= ~WS_EX_LAYERED;
+			SetWindowLong(hwnd, GWL_EXSTYLE, style);
+			SetForegroundWindow(hwnd);
+		}
+		else {
+			style |= WS_EX_LAYERED;
+			SetWindowLong(hwnd, GWL_EXSTYLE, style);
+			SetForegroundWindow(tHwnd);
+		}
+
 	}
 
 	/* Moves the invisible window to the position and size of Rust */
@@ -94,10 +126,14 @@ namespace Overlay {
 				ShowWindow(hwnd, SW_SHOW);
 			}
 
-			if (GetForegroundWindow() == tHwnd)
+			if (GetForegroundWindow() == tHwnd || GetForegroundWindow() == hwnd)
 				ShowWindow(hwnd, SW_SHOW);
 			else
 				ShowWindow(hwnd, SW_HIDE);
+
+			if (GetAsyncKeyState(VK_INSERT)) {
+				ToggleGui();
+			}
 
 			Sleep(WINDOW_ADJUST_RATE);
 		}
@@ -123,17 +159,73 @@ namespace Overlay {
 		D3DXCreateFont(p_Device, 20, 0, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Arial", &Font);
 
 		ImGui_ImplDX9_Init(hwnd, p_Device);
+
+		// wrapped in brackets so you can minimize it
+		{
+			ImGuiStyle& style = ImGui::GetStyle();
+			style.Alpha = 1.0;
+			style.ChildWindowRounding = 0;
+			style.WindowRounding = 0;
+			style.GrabRounding = 0;
+			style.GrabMinSize = 20;
+			style.FrameRounding = 0;
+
+
+			style.Colors[ImGuiCol_Text] = ImVec4(0.00f, 1.00f, 1.00f, 1.00f);
+			style.Colors[ImGuiCol_TextDisabled] = ImVec4(0.00f, 0.40f, 0.41f, 1.00f);
+			style.Colors[ImGuiCol_WindowBg] = ImVec4(0.00f, 0.00f, 0.00f, 1.00f);
+			style.Colors[ImGuiCol_ChildWindowBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+			style.Colors[ImGuiCol_Border] = ImVec4(0.00f, 1.00f, 1.00f, 0.65f);
+			style.Colors[ImGuiCol_BorderShadow] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+			style.Colors[ImGuiCol_FrameBg] = ImVec4(0.44f, 0.80f, 0.80f, 0.18f);
+			style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(0.44f, 0.80f, 0.80f, 0.27f);
+			style.Colors[ImGuiCol_FrameBgActive] = ImVec4(0.44f, 0.81f, 0.86f, 0.66f);
+			style.Colors[ImGuiCol_TitleBg] = ImVec4(0.14f, 0.18f, 0.21f, 0.73f);
+			style.Colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.00f, 0.00f, 0.00f, 0.54f);
+			style.Colors[ImGuiCol_TitleBgActive] = ImVec4(0.00f, 1.00f, 1.00f, 0.27f);
+			style.Colors[ImGuiCol_MenuBarBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.20f);
+			style.Colors[ImGuiCol_ScrollbarBg] = ImVec4(0.22f, 0.29f, 0.30f, 0.71f);
+			style.Colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.00f, 1.00f, 1.00f, 0.44f);
+			style.Colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.00f, 1.00f, 1.00f, 0.74f);
+			style.Colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.00f, 1.00f, 1.00f, 1.00f);
+			style.Colors[ImGuiCol_ComboBg] = ImVec4(0.16f, 0.24f, 0.22f, 0.60f);
+			style.Colors[ImGuiCol_CheckMark] = ImVec4(0.00f, 1.00f, 1.00f, 0.68f);
+			style.Colors[ImGuiCol_SliderGrab] = ImVec4(0.00f, 1.00f, 1.00f, 0.36f);
+			style.Colors[ImGuiCol_SliderGrabActive] = ImVec4(0.00f, 1.00f, 1.00f, 0.76f);
+			style.Colors[ImGuiCol_Button] = ImVec4(0.00f, 0.65f, 0.65f, 0.46f);
+			style.Colors[ImGuiCol_ButtonHovered] = ImVec4(0.01f, 1.00f, 1.00f, 0.43f);
+			style.Colors[ImGuiCol_ButtonActive] = ImVec4(0.00f, 1.00f, 1.00f, 0.62f);
+			style.Colors[ImGuiCol_Header] = ImVec4(0.00f, 1.00f, 1.00f, 0.33f);
+			style.Colors[ImGuiCol_HeaderHovered] = ImVec4(0.00f, 1.00f, 1.00f, 0.42f);
+			style.Colors[ImGuiCol_HeaderActive] = ImVec4(0.00f, 1.00f, 1.00f, 0.54f);
+			style.Colors[ImGuiCol_Column] = ImVec4(0.00f, 0.50f, 0.50f, 0.33f);
+			style.Colors[ImGuiCol_ColumnHovered] = ImVec4(0.00f, 0.50f, 0.50f, 0.47f);
+			style.Colors[ImGuiCol_ColumnActive] = ImVec4(0.00f, 0.70f, 0.70f, 1.00f);
+			style.Colors[ImGuiCol_ResizeGrip] = ImVec4(0.00f, 1.00f, 1.00f, 0.54f);
+			style.Colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.00f, 1.00f, 1.00f, 0.74f);
+			style.Colors[ImGuiCol_ResizeGripActive] = ImVec4(0.00f, 1.00f, 1.00f, 1.00f);
+			style.Colors[ImGuiCol_CloseButton] = ImVec4(0.00f, 0.78f, 0.78f, 0.35f);
+			style.Colors[ImGuiCol_CloseButtonHovered] = ImVec4(0.00f, 0.78f, 0.78f, 0.47f);
+			style.Colors[ImGuiCol_CloseButtonActive] = ImVec4(0.00f, 0.78f, 0.78f, 1.00f);
+			style.Colors[ImGuiCol_PlotLines] = ImVec4(0.00f, 1.00f, 1.00f, 1.00f);
+			style.Colors[ImGuiCol_PlotLinesHovered] = ImVec4(0.00f, 1.00f, 1.00f, 1.00f);
+			style.Colors[ImGuiCol_PlotHistogram] = ImVec4(0.00f, 1.00f, 1.00f, 1.00f);
+			style.Colors[ImGuiCol_PlotHistogramHovered] = ImVec4(0.00f, 1.00f, 1.00f, 1.00f);
+			style.Colors[ImGuiCol_TextSelectedBg] = ImVec4(0.00f, 1.00f, 1.00f, 0.22f);
+			style.Colors[ImGuiCol_ModalWindowDarkening] = ImVec4(0.04f, 0.10f, 0.09f, 0.51f);
+		}
 	}
 
 	/* Fuck WinAPI */
 
 	LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+		ImGuiIO& io = ImGui::GetIO();
+
 		switch (msg)
 		{
 		case WM_PAINT:
 			render();
 			break;
-
 		case WM_CREATE:
 			DwmExtendFrameIntoClientArea(hWnd, &margin);
 			break;
@@ -157,9 +249,42 @@ namespace Overlay {
 			if ((wParam & 0xfff0) == SC_KEYMENU) // Disable ALT application menu
 				return 0;
 			break;
+		case WM_LBUTTONDOWN:
+			io.MouseDown[0] = true;
+			break;
+		case WM_LBUTTONUP:
+			io.MouseDown[0] = false;
+			break;
+		case WM_RBUTTONDOWN:
+			io.MouseDown[1] = true;
+			break;
+		case WM_RBUTTONUP:
+			io.MouseDown[1] = false;
+			break;
+		case WM_MBUTTONDOWN:
+			io.MouseDown[2] = true;
+			break;
+		case WM_MBUTTONUP:
+			io.MouseDown[2] = false;
+			break;
+		case WM_MOUSEWHEEL:
+			io.MouseWheel += GET_WHEEL_DELTA_WPARAM(wParam) > 0 ? +1.0f : -1.0f;
+			break;
+		case WM_MOUSEMOVE:
+			io.MousePos.x = (signed short)(lParam);
+			io.MousePos.y = (signed short)(lParam >> 16);
+			break;
+		case WM_KEYDOWN:
+			if (wParam < 256)
+				io.KeysDown[wParam] = 1;
+
+			break;
+		case WM_KEYUP:
+			if (wParam < 256)
+				io.KeysDown[wParam] = 0;
+			break;
 		default:
 			return DefWindowProc(hWnd, msg, wParam, lParam);
-			break;
 		}
 		return 0;
 	}
@@ -205,10 +330,7 @@ namespace Overlay {
 			if (PeekMessage(&Message, hwnd, 0, 0, PM_REMOVE)) {
 				DispatchMessage(&Message);
 				TranslateMessage(&Message);
-				continue;
 			}
-
-			render();
 		}
 	}
 }
