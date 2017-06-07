@@ -22,11 +22,14 @@ namespace Overlay {
 
 			/* Draw Watermark */
 			Drawing::DrawString("hapis.exe", 25, 10, 255, 255, 255, 255, Font);
-			Drawing::DrawFormattedString("width: %d", 25, 35, 255, 255, 255, 255, Font, width);
-			Drawing::DrawFormattedString("height: %d", 25, 60, 255, 255, 255, 255, Font, height);
-			Drawing::DrawFormattedString("players: %d", 25, 85, 255, 255, 255, 255, Font, players.size());
-			if (localPlayer) Drawing::DrawFormattedString("pos: %f, %f, %f", 25, 110, 255, 255, 255, 255, Font, localPlayer->pos.x, localPlayer->pos.y, localPlayer->pos.z);
-			if (localPlayer) Drawing::DrawFormattedString("rot: %f, %f, %f", 25, 135, 255, 255, 255, 255, Font, localPlayer->rot.x, localPlayer->rot.y, localPlayer->rot.z);
+
+			if (settings->debug) {
+				Drawing::DrawFormattedString("width: %d", 25, 35, 255, 255, 255, 255, Font, width);
+				Drawing::DrawFormattedString("height: %d", 25, 60, 255, 255, 255, 255, Font, height);
+				Drawing::DrawFormattedString("players: %d", 25, 85, 255, 255, 255, 255, Font, players.size());
+				if (localPlayer) Drawing::DrawFormattedString("pos: %f, %f, %f", 25, 110, 255, 255, 255, 255, Font, localPlayer->pos.x, localPlayer->pos.y, localPlayer->pos.z);
+				if (localPlayer) Drawing::DrawFormattedString("rot: %f, %f, %f", 25, 135, 255, 255, 255, 255, Font, localPlayer->rot.x, localPlayer->rot.y, localPlayer->rot.z);
+			}
 
 			/* Draw Crosshair */
 			if (settings->crosshair) {
@@ -35,11 +38,13 @@ namespace Overlay {
 			}
 
 			/* Draw ESP Boxes */
-			for (auto player : players) {
-				Rust::Vector3 pos;
-				bool visible = Math::WorldToScreen(player.second, pos, localPlayer->viewMatrix, width, height);
-				Drawing::DrawString("player", pos.x, pos.y, 255, 255, 255, 255, Font);
-				//if (visible)  Drawing::DrawString("player", pos.x, pos.y, 255, 255, 255, 255, Font);
+			if (settings->esp) {
+				for (int i = 0; i < players.size(); i++) {
+					Rust::Vector3 pos;
+					bool visible = Math::World2Screen(localPlayer->pos, localPlayer->rot, players.at(i), pos, height, width);
+					Drawing::DrawFormattedString("%f, %f, %f", width - 200, (i + 10) * 5, 255, 255, 255, 255, Font, pos.x, pos.y, pos.z);
+					//if (visible)  Drawing::DrawString("player", pos.x, pos.y, 255, 255, 255, 255, Font);
+				}
 			}
 
 			/* Draw Scene */

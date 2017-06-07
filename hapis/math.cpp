@@ -1,58 +1,43 @@
 #include "math.h"
 
-void Math::AnglesToAxes(Rust::Vector3 angles, Rust::Vector3 & left, Rust::Vector3 & up, Rust::Vector3 & forward) {
-	const float DEG2RAD = 3.141593f / 180;
-	float sx, sy, sz, cx, cy, cz, theta;
+// this function could/should probably be reduced to allocate less vectors
+bool Math::World2Screen(Rust::Vector3 camerapos, Rust::Vector3 camerarot, Rust::Vector3 world, Rust::Vector3 &screen, int screenHeight, int screenWidth)
+{
+	// Translate by inverse camera pos
+	Rust::Vector3 point;
+	Rust::Vector3 icamerapos = Rust::Vector3{ camerapos.x, camerapos.y, -camerapos.z };
+	Rust::Vector3 iworld = Rust::Vector3{ world.x, world.y, -world.z };
+	iworld = iworld - icamerapos;
 
-	// rotation angle about X-axis (pitch)
-	theta = angles.x * DEG2RAD;
-	sx = sinf(theta);
-	cx = cosf(theta);
+	// Construct rotation matrix
+	float cosX = cos(camerarot.x);
+	float cosY = cos(camerarot.y);
+	float cosZ = cos(camerarot.z);
+	float sinX = sin(camerarot.x);
+	float sinY = sin(camerarot.y);
+	float sinZ = sin(camerarot.z);
 
-	// rotation angle about Y-axis (yaw)
-	theta = angles.y * DEG2RAD;
-	sy = sinf(theta);
-	cy = cosf(theta);
+	float matrix[3][3] = {
+		{ cosZ * cosY - sinZ * sinX * sinY, -cosX * sinZ, cosZ * sinY + cosY * sinZ * sinX },
+		{ cosY * sinZ + cosZ * sinX * sinY, cosZ * cosX, sinZ * sinY - cosZ * cosY * sinX },
+		{ -cosX * sinY, sinX, cosX * cosY }
+	};
 
-	// rotation angle about Z-axis (roll)
-	theta = angles.z * DEG2RAD;
-	sz = sinf(theta);
-	cz = cosf(theta);
+	// apply rotation to point
+	Rust::Vector3 rotatedPoint{
+		matrix[0][0] * iworld.x + matrix[0][1] * iworld.y + matrix[0][2] * iworld.z,
+		matrix[1][0] * iworld.x + matrix[1][1] * iworld.y + matrix[1][2] * iworld.z,
+		matrix[2][0] * iworld.x + matrix[2][1] * iworld.y + matrix[2][2] * iworld.z
+	};
 
-	// determine left axis
-	left.x = cy*cz;
-	left.y = sx*sy*cz + cx*sz;
-	left.z = -cx*sy*cz + sx*sz;
+	// revert inverse operation
+	point = Rust::Vector3{ rotatedPoint.x, rotatedPoint.y, -rotatedPoint.z };
 
-	// determine up axis
-	up.x = -cy*sz;
-	up.y = -sx*sy*sz + cx*cz;
-	up.z = cx*sy*sz + sx*cz;
 
-	// determine forward axis
-	forward.x = sy;
-	forward.y = -sx*cy;
-	forward.z = cx*cy;
+	// calculate screen point
+	float focalLength = (screenHeight / 2) / tan(FOV / 2);
+	screen.x = focalLength * point.x / point.z + screenWidth / 2;
+	screen.y = focalLength * point.y / point.z + screenHeight / 2;
+
+	return rotatedPoint.z > 0;
 }
-
-bool Math::WorldToScreen(Rust::Vector3 pos, Rust::Vector3 & screen, float matrix[16], int windowWidth, int windowHeight) {
-	/* Matrix-vector Product, multiplying world(eye) coordinates by projection matrix */
-	Rust::Vector3 clipCords;
-	clipCords.x = pos.x*matrix[0] + pos.y*matrix[4] + pos.z*matrix[8] + matrix[12];
-	clipCords.y = pos.x*matrix[1] + pos.y*matrix[5] + pos.z*matrix[9] + matrix[13];
-	clipCords.z = pos.x*matrix[2] + pos.y*matrix[6] + pos.z*matrix[10] + matrix[14];
-	int w = pos.x*matrix[3] + pos.y*matrix[7] + pos.z*matrix[11] + matrix[15];
-
-	/* perspective division, dividing by w = Normalized Device Coordinates */
-	Rust::Vector3 normalized;
-	normalized.x = clipCords.x / w;
-	normalized.y = clipCords.y / w;
-	normalized.z = clipCords.z / w;
-
-	screen.x = (windowWidth / 2 * normalized.x) + (normalized.x + windowWidth / 2);
-	screen.y = -(windowHeight / 2 * normalized.y) + (normalized.y + windowHeight / 2);
-
-	return w < 0.1f;
-}
-
-

@@ -27,7 +27,7 @@ void OnRustPacketReceived(Proxy::Client* client, unsigned char* data, uint32_t s
 		auto entity = players.find(message.entity_id);
 		if (entity != players.end()) {
 			players[message.entity_id] = Rust::Vector3{ message.position.x, message.position.y, message.position.z };
-		
+
 			if (localPlayer->entityId = message.entity_id)
 				localPlayer->updatePosition(message.position, message.rotation);
 		}
@@ -40,11 +40,10 @@ void OnRustPacketReceived(Proxy::Client* client, unsigned char* data, uint32_t s
 		Entity entity;
 		entity.ParseFromString(strdata);
 
-		printf("Entities packet received! Entity: %s\n", Rust::StringPool::GetShortened(entity.basenetworkable().prefabid()).c_str());
 
 		if (entity.has_baseplayer() && entity.has_basenetworkable()) {
 			players[entity.basenetworkable().uid()] = Rust::Vector3{ 0, 0, 0 };
-			 
+
 			if (entity.baseplayer().has_metabolism())
 				localPlayer = new Rust::LocalPlayer(Rust::Vector3{ 0, 0, 0 }, Rust::Vector3{ 0, 0, 0 }, entity.basenetworkable().uid());
 		}
@@ -55,7 +54,7 @@ void OnRustPacketReceived(Proxy::Client* client, unsigned char* data, uint32_t s
 		strdata.append((const char*)(data + 1), size - 1);
 
 		Approval approval;
-		
+
 		approval.ParseFromString(strdata);
 		printf("Approval packet received!\n"
 			"\t- level: %s\n"
@@ -84,13 +83,14 @@ int main(int argc, const char* argv[])
 	std::string target_ip;
 	int target_port;
 
-	
+
 	if (argc < 3) {
 		printf("Server IP: ");
 		getline(std::cin, target_ip);
 		printf("Server Port: ");
 		std::cin >> target_port;
-	} else {
+	}
+	else {
 		target_ip = argv[1];
 		target_port = atoi(argv[2]);
 	}
@@ -104,7 +104,7 @@ int main(int argc, const char* argv[])
 		server->Start();
 
 		while (server->is_alive) Sleep(1000);
-		
+
 		return 0;
 	}
 	catch (std::exception e)

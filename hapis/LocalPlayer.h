@@ -10,7 +10,6 @@ namespace Rust {
 	public:
 		Rust::Vector3 pos;
 		Rust::Vector3 rot;
-		float viewMatrix[16];
 		int entityId;
 
 		void updatePosition(Rust::Vector3 pos, Rust::Vector3 rot);

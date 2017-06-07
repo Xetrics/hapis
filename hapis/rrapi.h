@@ -123,6 +123,14 @@ namespace Rust
 
 			return *this;
 		 }
+
+		Vector3 operator-(const Vector3 &v2) {
+			this->x = this->x - v2.x;
+			this->y = this->y - v2.y;
+			this->z = this->z - v2.z;
+
+			return *this;
+		}
 	};
 
 	template <typename T>
