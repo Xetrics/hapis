@@ -43,11 +43,20 @@ namespace Overlay {
 			if (settings->esp) {
 				Rust::Vector3 pos;
 				for (auto player : players) {
-					Rust::Vector3 pos;
-					bool visible = Math::World2Screen(localPlayer->pos, localPlayer->rot, FOV, { 0, 1.5f, 0 }, player.second, pos, width, height);
-					Rust::Vector3 distance = localPlayer->pos - player.second;
-					if (visible && (distance.x < 50 && distance.y < 50 && distance.z < 50))
-						Drawing::DrawBorderBox(p_Device, pos.x, pos.y + 50, 10, 10, 3, 255, 255, 255, 255);
+					Rust::Vector3 feetPos = player.second;
+					Rust::Vector3 headPos = feetPos;
+
+					headPos.y + 5.0f;
+
+					bool visible = Math::World2Screen(localPlayer->pos, localPlayer->rot, FOV, { 0, 1.5f, 0 }, headPos, feetPos, width, height);
+					bool vis2 = visible && Math::World2Screen(localPlayer->pos, localPlayer->rot, FOV, { 0, 1.5f, 0 }, feetPos, feetPos, width, height);
+
+					float distance = Math::Get3dDistance(localPlayer->pos, feetPos);
+					float h = feetPos.x - headPos.x;
+					float w = h / 2.0f;
+
+					if (visible && vis2 && distance < 963.0f)
+						Drawing::DrawBorderBox(p_Device, feetPos.x, headPos.y, w + 2.0f, h, 2, 255, 255, 255, 255);
 				}
 			}
 
