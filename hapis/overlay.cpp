@@ -55,7 +55,7 @@ namespace Overlay {
 					float h = feetPos.x - headPos.x;
 					float w = h / 2.0f;
 
-					if (visible && distance < 963.0f)
+					if (visible && distance < 963.0f) 
 						Drawing::DrawBorderBox(p_Device, feetPos.x, headPos.y, w + 2.0f, h, 2, 255, 255, 255, 255);
 				}
 			}
