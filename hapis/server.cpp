@@ -133,6 +133,5 @@ void Proxy::Server::Close()
 		this->pointer = 0;
 		this->is_alive = false;
 		this->incoming_guid = 0;
-		if (this->thread.running()) this->thread.terminate();
 	}
 }

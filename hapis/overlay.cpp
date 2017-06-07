@@ -44,8 +44,8 @@ namespace Overlay {
 			if (settings->esp) {
 				for (int i = 0; i < players.size(); i++) {
 					Rust::Vector3 pos;
-					bool visible = Math::World2Screen(localPlayer->pos, localPlayer->rot, players.at(i), pos, height, width);
-					Drawing::DrawFormattedString("%f, %f, %f", width - 200, (i + 10) * 25, 255, 255, 255, 255, Font, pos.x, pos.y, pos.z);
+					//bool visible = Math::World2Screen(localPlayer->pos, localPlayer->rot, players.at(i), pos, height, width);
+					//Drawing::DrawFormattedString("%f, %f, %f", width - 200, (i + 10) * 25, 255, 255, 255, 255, Font, pos.x, pos.y, pos.z);
 					//if (visible)  Drawing::DrawString("player", pos.x, pos.y, 255, 255, 255, 255, Font);
 				}
 			}
