@@ -1,5 +1,4 @@
 #include "overlay.h"
-#include "main.h"
 
 namespace Overlay {
 	int width = GetSystemMetrics(SM_CXSCREEN);
@@ -13,6 +12,10 @@ namespace Overlay {
 	IDirect3DDevice9Ex* p_Device;
 	D3DPRESENT_PARAMETERS p_Params;
 	ID3DXFont* Font;
+
+	ImVec4 clear_col = ImColor(114, 144, 154);
+	bool show_test_window = true;
+	bool show_another_window = false;
 
 	void render() {
 		if (GetForegroundWindow() == tHwnd)
@@ -47,9 +50,31 @@ namespace Overlay {
 				}
 			}
 
+			/* ImGui */
+			static float f = 0.0f;
+			ImGui::Text("Hello, world!");
+			ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+			ImGui::ColorEdit3("clear color", (float*)&clear_col);
+			if (ImGui::Button("Test Window")) show_test_window ^= 1;
+			if (ImGui::Button("Another Window")) show_another_window ^= 1;
+			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
 			/* Draw Scene */
-			p_Device->EndScene();
-			p_Device->PresentEx(0, 0, 0, 0, 0);
+			p_Device->SetRenderState(D3DRS_ZENABLE, false);
+			p_Device->SetRenderState(D3DRS_ALPHABLENDENABLE, false);
+			p_Device->SetRenderState(D3DRS_SCISSORTESTENABLE, false);
+			D3DCOLOR clear_col_dx = D3DCOLOR_RGBA((int)(clear_col.x*255.0f), (int)(clear_col.y*255.0f), (int)(clear_col.z*255.0f), (int)(clear_col.w*255.0f));
+			p_Device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, clear_col_dx, 1.0f, 0);
+			if (p_Device->BeginScene() >= 0)
+			{
+				ImGui::Render();
+				p_Device->EndScene();
+			}
+			p_Device->Present(NULL, NULL, NULL, NULL);
+
+			/* Draw Scene */
+			//p_Device->EndScene();
+			//p_Device->PresentEx(0, 0, 0, 0, 0);
 		}
 	}
 
@@ -102,8 +127,7 @@ namespace Overlay {
 	}
 
 	/* Fuck WinAPI */
-	LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-	{
+	LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		switch (msg)
 		{
 		case WM_PAINT:
@@ -117,7 +141,22 @@ namespace Overlay {
 		case WM_DESTROY:
 			PostQuitMessage(1);
 			return 0;
-
+		case WM_SIZE:
+			if (p_Device != NULL && wParam != SIZE_MINIMIZED)
+			{
+				ImGui_ImplDX9_InvalidateDeviceObjects();
+				p_Params.BackBufferWidth = LOWORD(lParam);
+				p_Params.BackBufferHeight = HIWORD(lParam);
+				HRESULT hr = p_Device->Reset(&p_Params);
+				if (hr == D3DERR_INVALIDCALL)
+					IM_ASSERT(0);
+				ImGui_ImplDX9_CreateDeviceObjects();
+			}
+			return 0;
+		case WM_SYSCOMMAND:
+			if ((wParam & 0xfff0) == SC_KEYMENU) // Disable ALT application menu
+				return 0;
+			break;
 		default:
 			return DefWindowProc(hWnd, msg, wParam, lParam);
 			break;
@@ -159,6 +198,8 @@ namespace Overlay {
 			ShowWindow(hwnd, SW_SHOW);
 
 			InitDirectX();
+
+			ImGui_ImplDX9_Init(hwnd, p_Device);
 		}
 
 		MSG Message;

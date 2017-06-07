@@ -69,7 +69,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(IncludePath);$(SolutionDir)\Libraries\DX\Include;$(SolutionDir)\Libraries\protobuf-2.5.0\Include;</IncludePath>
+    <IncludePath>$(IncludePath);$(SolutionDir)\Libraries\DX\Include;$(SolutionDir)\Libraries\protobuf-2.5.0\Include;$(SolutionDir)\Libraries\imgui</IncludePath>
     <LibraryPath>$(LibraryPath);$(SolutionDir)\Libraries\DX\Lib;$(SolutionDir)\Libraries\protobuf-2.5.0\Lib;</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
