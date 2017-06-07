@@ -1,32 +1,7 @@
-﻿  imgui_impl_dx9.cpp
-  main.cpp
-  C:\Program Files (x86)\Windows Kits\8.1\Include\um\dinput.h: DIRECTINPUT_VERSION undefined. Defaulting to version 0x0800
-c:\users\user\hapis\hapis\overlay.h(25): warning C4005: 'DIRECTINPUT_VERSION': macro redefinition
-  C:\Program Files (x86)\Windows Kits\8.1\Include\um\dinput.h(48): note: see previous definition of 'DIRECTINPUT_VERSION'
-C:\Users\user\hapis\Libraries\protobuf-2.5.0\Include\google/protobuf/descriptor.h(1445): warning C4244: 'return': conversion from '__int64' to 'int', possible loss of data
-C:\Users\user\hapis\Libraries\protobuf-2.5.0\Include\google/protobuf/descriptor.h(1447): warning C4244: 'return': conversion from '__int64' to 'int', possible loss of data
-C:\Users\user\hapis\Libraries\protobuf-2.5.0\Include\google/protobuf/descriptor.h(1449): warning C4244: 'return': conversion from '__int64' to 'int', possible loss of data
-C:\Users\user\hapis\Libraries\protobuf-2.5.0\Include\google/protobuf/descriptor.h(1455): warning C4244: 'return': conversion from '__int64' to 'int', possible loss of data
-C:\Users\user\hapis\Libraries\protobuf-2.5.0\Include\google/protobuf/descriptor.h(1457): warning C4244: 'return': conversion from '__int64' to 'int', possible loss of data
-C:\Users\user\hapis\Libraries\protobuf-2.5.0\Include\google/protobuf/descriptor.h(1463): warning C4244: 'return': conversion from '__int64' to 'int', possible loss of data
-C:\Users\user\hapis\Libraries\protobuf-2.5.0\Include\google/protobuf/descriptor.h(1465): warning C4244: 'return': conversion from '__int64' to 'int', possible loss of data
-C:\Users\user\hapis\Libraries\protobuf-2.5.0\Include\google/protobuf/descriptor.h(1470): warning C4244: 'return': conversion from '__int64' to 'int', possible loss of data
-C:\Users\user\hapis\Libraries\protobuf-2.5.0\Include\google/protobuf/descriptor.h(1474): warning C4244: 'return': conversion from '__int64' to 'int', possible loss of data
-C:\Users\user\hapis\Libraries\protobuf-2.5.0\Include\google/protobuf/descriptor.h(1478): warning C4244: 'return': conversion from '__int64' to 'int', possible loss of data
-C:\Users\user\hapis\Libraries\protobuf-2.5.0\Include\google/protobuf/unknown_field_set.h(142): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\user\hapis\Libraries\protobuf-2.5.0\Include\google/protobuf/unknown_field_set.h(237): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\user\hapis\Libraries\protobuf-2.5.0\Include\google/protobuf/unknown_field_set.h(305): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
-  overlay.cpp
-  C:\Program Files (x86)\Windows Kits\8.1\Include\um\dinput.h: DIRECTINPUT_VERSION undefined. Defaulting to version 0x0800
-c:\users\user\hapis\hapis\overlay.h(25): warning C4005: 'DIRECTINPUT_VERSION': macro redefinition
-  C:\Program Files (x86)\Windows Kits\8.1\Include\um\dinput.h(48): note: see previous definition of 'DIRECTINPUT_VERSION'
-overlay.cpp(39): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-overlay.cpp(40): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-overlay.cpp(208): warning C4244: 'argument': conversion from 'float' to 'BYTE', possible loss of data
-  Generating code
-  255 of 4942 functions ( 5.2%) were compiled, the rest were copied from previous compilation.
+﻿  Generating code
+  489 of 4941 functions ( 9.9%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    92 functions had inline decision re-evaluated but remain unchanged
+    87 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
 libprotobuf.lib(descriptor.obj) : warning LNK4099: PDB 'libprotobuf.pdb' was not found with 'libprotobuf.lib(descriptor.obj)' or at 'C:\Users\user\hapis\x64\Release\libprotobuf.pdb'; linking object as if no debug info
 libprotobuf.lib(descriptor.pb.obj) : warning LNK4099: PDB 'libprotobuf.pdb' was not found with 'libprotobuf.lib(descriptor.pb.obj)' or at 'C:\Users\user\hapis\x64\Release\libprotobuf.pdb'; linking object as if no debug info
