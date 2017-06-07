@@ -49,13 +49,13 @@ namespace Overlay {
 					headPos.y + 5.0f;
 
 					bool visible = Math::World2Screen(localPlayer->pos, localPlayer->rot, FOV, { 0, 1.5f, 0 }, headPos, feetPos, width, height);
-					bool vis2 = visible && Math::World2Screen(localPlayer->pos, localPlayer->rot, FOV, { 0, 1.5f, 0 }, feetPos, feetPos, width, height);
+					visible &= visible && Math::World2Screen(localPlayer->pos, localPlayer->rot, FOV, { 0, 1.5f, 0 }, feetPos, feetPos, width, height);
 
 					float distance = Math::Get3dDistance(localPlayer->pos, feetPos);
 					float h = feetPos.x - headPos.x;
 					float w = h / 2.0f;
 
-					if (visible && vis2 && distance < 963.0f)
+					if (visible && distance < 963.0f)
 						Drawing::DrawBorderBox(p_Device, feetPos.x, headPos.y, w + 2.0f, h, 2, 255, 255, 255, 255);
 				}
 			}
