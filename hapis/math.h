@@ -7,5 +7,5 @@
 const float DEG2RAD = PI / 180;
 
 namespace Math {
-	bool World2Screen(Rust::Vector3 camerapos, Rust::Vector3 camerarot, Rust::Vector3 world, Rust::Vector3 & screen, int screenHeight, int screenWidth);
+	bool World2Screen(Rust::Vector3 from, Rust::Vector3 rot, float fovDegree, Rust::Vector3 offset, Rust::Vector3 target, Rust::Vector3& vector, float width, float height);
 }

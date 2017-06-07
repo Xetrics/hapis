@@ -41,9 +41,10 @@ namespace Overlay {
 
 			/* Draw ESP Boxes */
 			if (settings->esp) {
+				Rust::Vector3 pos;
 				for (auto player : players) {
 					Rust::Vector3 pos;
-					bool visible = Math::World2Screen(localPlayer->pos, localPlayer->rot, player.second, pos, height, width);
+					bool visible = Math::World2Screen(localPlayer->pos, localPlayer->rot, FOV, { 0, 1.5f, 0 }, player.second, pos, width, height);
 					if (visible)
 						Drawing::DrawString("player", pos.x, pos.y, 255, 255, 255, 255, Font);
 				}
@@ -57,6 +58,7 @@ namespace Overlay {
 				{
 					if (ImGui::TreeNodeEx("Visuals", ImGuiTreeNodeFlags_CollapsingHeader)) {
 						ImGui::Checkbox("Crosshair", &settings->crosshair);
+						ImGui::Checkbox("ESP", &settings->esp);
 						if (ImGui::TreeNodeEx("Weather", ImGuiTreeNodeFlags_CollapsingHeader)) {
 							if(!settings->weather->freeze_time)
 								ImGui::Checkbox("Always Day", &settings->weather->always_day);

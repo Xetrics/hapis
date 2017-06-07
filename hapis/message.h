@@ -130,13 +130,13 @@ namespace Rust
 	public:
 		virtual void Serialize(void* pointer)
 		{
-			Write<uint8_t>(pointer, MessageType::EntityPosition);
+			Write<uint8_t>(pointer, MessageType::EntityDestroy);
 			Write<uint32_t>(pointer, entity_id);
 		}
 
 		virtual void Deserialize(void* pointer)
 		{
-			assert((type = (MessageType)Read<uint8_t>(pointer)) == MessageType::EntityPosition);
+			assert((type = (MessageType)Read<uint8_t>(pointer)) == MessageType::EntityDestroy);
 			entity_id = Read<uint32_t>(pointer);
 		}
 	};

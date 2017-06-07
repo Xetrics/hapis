@@ -68,11 +68,13 @@ void OnRustPacketReceived(Proxy::Client* client, unsigned char* data, uint32_t s
 			//	staticTime = env->datetime();
 			//env->set_datetime(staticTime);
 
-			if_setting(weather->always_day, env->set_datetime(24000));
-			if_setting(weather->no_fog, env->set_fog(-1));
-			if_setting(weather->no_rain, env->set_rain(-1));
-			if_setting(weather->no_clouds, env->set_clouds(-1));
-			if_setting(weather->no_wind, env->set_wind(-1));
+			//printf("datetime: %llu\n", env->datetime());
+
+			if_setting(weather->always_day, env->set_datetime(5250201459021885585)); // lets hope this works 
+			if_setting(weather->no_fog, env->set_fog(0));
+			if_setting(weather->no_rain, env->set_rain(0));
+			if_setting(weather->no_clouds, env->set_clouds(0));
+			if_setting(weather->no_wind, env->set_wind(0));
 
 			entity.release_environment();
 			entity.set_allocated_environment(env);
