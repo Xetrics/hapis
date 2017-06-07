@@ -141,6 +141,28 @@ namespace Rust
 		}
 	};
 
+	class RPCMessageClass : public Message {
+	public:
+		uint32_t entity_id;
+		uint32_t func_name;
+		void* objects;
+	public:
+		virtual void Serialize(void* pointer)
+		{
+			Write<uint8_t>(pointer, MessageType::RPCMessage);
+			Write<uint32_t>(pointer, entity_id);
+			Write<uint32_t>(pointer, func_name);
+		}
+
+		virtual void Deserialize(void* pointer)
+		{
+			assert((type = (MessageType)Read<uint8_t>(pointer)) == MessageType::RPCMessage);
+			entity_id = Read<uint32_t>(pointer);
+			func_name = Read<uint32_t>(pointer);
+			
+		}
+	};
+
 	class ConsoleCommandMessage : public Message
 	{
 	public:

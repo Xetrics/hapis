@@ -1,0 +1,2 @@
+﻿  math.cpp
+LINK : fatal error LNK1104: cannot open file 'C:\Users\slapzor\Desktop\hapis\x64\Release\hapis.exe'

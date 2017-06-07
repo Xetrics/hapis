@@ -3,39 +3,39 @@
 #include "main.h"
 #include "message.h"
 
-void ListenThread(Proxy::Client* client)
+uint32_t Proxy::Client::Tick()
 {
-	while (client->is_connected)
+	if (!this->is_connected)
+		return TICK_DISCONNECT;
+
+	if (!Rust::API::NET_Receive(this->pointer))
+		return TICK_NO_MORE_PACKETS;
+
+	uint32_t size = Rust::API::NETRCV_LengthBits(this->pointer) / 8;
+	unsigned char* data = (unsigned char*)Rust::API::NETRCV_RawData(this->pointer);
+
+	//printf("[Client] Packet received from game server, ID: %d (%s), size: %d\n", data[0], Rust::Message::TypeToName((Rust::MessageType)data[0]), size);
+
+	switch (data[0])
 	{
-		while (Rust::API::NET_Receive(client->pointer))
-		{
-			uint32_t size = Rust::API::NETRCV_LengthBits(client->pointer) / 8;
-			unsigned char* data = (unsigned char*)Rust::API::NETRCV_RawData(client->pointer);
-
-			//printf("[Client] Packet received from game server, ID: %d (%s), size: %d\n", data[0], Rust::Message::TypeToName((Rust::MessageType)data[0]), size);
-
-			switch (data[0])
-			{
-			case ID_DISCONNECTION_NOTIFICATION:
-				printf("[Client] Disconnection notification received from game server, disconnecting...\n");
-				client->server->Close();
-				client->Close();
-				return;
-			case ID_CONNECTION_LOST:
-				printf("[Client] Connection to game server lost, disconnecting from client and closing...\n");
-				client->server->is_alive = false;
-				client->server->Send(data, size);
-				client->Close();
-				return;
-			}
-
-			/* game server sent a packet to proxy, forward to client */
-			OnRustPacketReceived(client, data, size);
-			client->server->Send(data, size);
-		}
-
-		Sleep(PROXY_TICK_MS);
+	case ID_DISCONNECTION_NOTIFICATION:
+		printf("[Client] Disconnection notification received from game server, disconnecting...\n");
+		this->server->Close();
+		this->Close();
+		return TICK_DISCONNECT;
+	case ID_CONNECTION_LOST:
+		printf("[Client] Connection to game server lost, disconnecting from client and closing...\n");
+		this->server->is_alive = false;
+		this->server->Send(data, size);
+		this->Close();
+		return TICK_DISCONNECT;
 	}
+
+	/* game server sent a packet to proxy, forward to client */
+	OnRustPacketReceived(this, data, size);
+	this->server->Send(data, size);
+
+	return 0;
 }
 
 Proxy::Client::Client(std::string target_ip, int target_port, Proxy::Server* server)
@@ -60,11 +60,6 @@ Proxy::Client::~Client()
 	Close();
 }
 
-void Proxy::Client::Start()
-{
-	thread = util::athread(ListenThread, this);
-}
-
 void Proxy::Client::Send(unsigned char* data, uint32_t size)
 {
 	if (!this->incoming_guid) return;
@@ -81,6 +76,5 @@ void Proxy::Client::Close()
 		this->pointer = 0;
 		this->is_connected = false;
 		this->incoming_guid = 0;
-		this->thread.terminate();
 	}
 }
