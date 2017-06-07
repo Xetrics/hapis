@@ -1,40 +1,9 @@
-﻿  client.cpp
-  LocalPlayer.cpp
-  main.cpp
-  C:\Program Files (x86)\Windows Kits\8.1\Include\um\dinput.h: DIRECTINPUT_VERSION undefined. Defaulting to version 0x0800
-c:\users\slapzor\desktop\hapis\hapis\overlay.h(25): warning C4005: 'DIRECTINPUT_VERSION': macro redefinition
-  C:\Program Files (x86)\Windows Kits\8.1\Include\um\dinput.h(48): note: see previous definition of 'DIRECTINPUT_VERSION'
-C:\Users\slapzor\Desktop\hapis\Libraries\protobuf-2.5.0\Include\google/protobuf/descriptor.h(1445): warning C4244: 'return': conversion from '__int64' to 'int', possible loss of data
-C:\Users\slapzor\Desktop\hapis\Libraries\protobuf-2.5.0\Include\google/protobuf/descriptor.h(1447): warning C4244: 'return': conversion from '__int64' to 'int', possible loss of data
-C:\Users\slapzor\Desktop\hapis\Libraries\protobuf-2.5.0\Include\google/protobuf/descriptor.h(1449): warning C4244: 'return': conversion from '__int64' to 'int', possible loss of data
-C:\Users\slapzor\Desktop\hapis\Libraries\protobuf-2.5.0\Include\google/protobuf/descriptor.h(1455): warning C4244: 'return': conversion from '__int64' to 'int', possible loss of data
-C:\Users\slapzor\Desktop\hapis\Libraries\protobuf-2.5.0\Include\google/protobuf/descriptor.h(1457): warning C4244: 'return': conversion from '__int64' to 'int', possible loss of data
-C:\Users\slapzor\Desktop\hapis\Libraries\protobuf-2.5.0\Include\google/protobuf/descriptor.h(1463): warning C4244: 'return': conversion from '__int64' to 'int', possible loss of data
-C:\Users\slapzor\Desktop\hapis\Libraries\protobuf-2.5.0\Include\google/protobuf/descriptor.h(1465): warning C4244: 'return': conversion from '__int64' to 'int', possible loss of data
-C:\Users\slapzor\Desktop\hapis\Libraries\protobuf-2.5.0\Include\google/protobuf/descriptor.h(1470): warning C4244: 'return': conversion from '__int64' to 'int', possible loss of data
-C:\Users\slapzor\Desktop\hapis\Libraries\protobuf-2.5.0\Include\google/protobuf/descriptor.h(1474): warning C4244: 'return': conversion from '__int64' to 'int', possible loss of data
-C:\Users\slapzor\Desktop\hapis\Libraries\protobuf-2.5.0\Include\google/protobuf/descriptor.h(1478): warning C4244: 'return': conversion from '__int64' to 'int', possible loss of data
-C:\Users\slapzor\Desktop\hapis\Libraries\protobuf-2.5.0\Include\google/protobuf/unknown_field_set.h(142): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\slapzor\Desktop\hapis\Libraries\protobuf-2.5.0\Include\google/protobuf/unknown_field_set.h(237): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\slapzor\Desktop\hapis\Libraries\protobuf-2.5.0\Include\google/protobuf/unknown_field_set.h(305): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
-main.cpp(25): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-  math.cpp
+﻿  math.cpp
 math.cpp(38): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-  overlay.cpp
-  C:\Program Files (x86)\Windows Kits\8.1\Include\um\dinput.h: DIRECTINPUT_VERSION undefined. Defaulting to version 0x0800
-c:\users\slapzor\desktop\hapis\hapis\overlay.h(25): warning C4005: 'DIRECTINPUT_VERSION': macro redefinition
-  C:\Program Files (x86)\Windows Kits\8.1\Include\um\dinput.h(48): note: see previous definition of 'DIRECTINPUT_VERSION'
-overlay.cpp(38): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-overlay.cpp(39): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-overlay.cpp(319): warning C4244: 'argument': conversion from 'float' to 'BYTE', possible loss of data
-  rrapi.cpp
-rrapi.cpp(133): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-rrapi.cpp(134): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-  server.cpp
   Generating code
-  256 of 4949 functions ( 5.2%) were compiled, the rest were copied from previous compilation.
+  254 of 4949 functions ( 5.1%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    102 functions had inline decision re-evaluated but remain unchanged
+    94 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
 libprotobuf.lib(descriptor.obj) : warning LNK4099: PDB 'libprotobuf.pdb' was not found with 'libprotobuf.lib(descriptor.obj)' or at 'C:\Users\slapzor\Desktop\hapis\x64\Release\libprotobuf.pdb'; linking object as if no debug info
 libprotobuf.lib(descriptor.pb.obj) : warning LNK4099: PDB 'libprotobuf.pdb' was not found with 'libprotobuf.lib(descriptor.pb.obj)' or at 'C:\Users\slapzor\Desktop\hapis\x64\Release\libprotobuf.pdb'; linking object as if no debug info
