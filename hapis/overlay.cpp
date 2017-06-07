@@ -132,10 +132,6 @@ namespace Overlay {
 			else
 				ShowWindow(hwnd, SW_HIDE);
 
-			if (GetAsyncKeyState(VK_INSERT)) {
-				ToggleGui();
-			}
-
 			Sleep(WINDOW_ADJUST_RATE);
 		}
 	}
@@ -225,8 +221,21 @@ namespace Overlay {
 		switch (msg)
 		{
 		case WM_PAINT:
+		{
+			static bool bKeyPressed = false;
+			bool bKeyPressedThisFrame = (GetAsyncKeyState(VK_INSERT) & 0x8000) != 0;
+
+			if (bKeyPressedThisFrame != bKeyPressed &&
+				bKeyPressedThisFrame)
+			{
+				ToggleGui();
+			}
+
+			bKeyPressed = bKeyPressedThisFrame;
+
 			render();
 			break;
+		}
 		case WM_CREATE:
 			DwmExtendFrameIntoClientArea(hWnd, &margin);
 			break;
@@ -327,8 +336,10 @@ namespace Overlay {
 		}
 
 		MSG Message;
-		for (;;) {
-			if (PeekMessage(&Message, hwnd, 0, 0, PM_REMOVE)) {
+		while (true)
+		{
+			if (GetMessage(&Message, hwnd, 0, 0))
+			{
 				DispatchMessage(&Message);
 				TranslateMessage(&Message);
 			}

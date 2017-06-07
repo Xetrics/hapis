@@ -11,7 +11,7 @@ void ListenThread(Proxy::Server* server)
 		if (server_result & TICK_DISCONNECT)
 			break; 
 
-		uint32_t client_result = server->client ? server->client->Tick() : 0;
+		uint32_t client_result = server->client ? server->client->Tick() : TICK_NO_MORE_PACKETS;
 		if (client_result & TICK_DISCONNECT)
 			break;
 
