@@ -1,4 +1,8 @@
-﻿  main.cpp
+﻿  imgui_impl_dx9.cpp
+  main.cpp
+  C:\Program Files (x86)\Windows Kits\8.1\Include\um\dinput.h: DIRECTINPUT_VERSION undefined. Defaulting to version 0x0800
+c:\users\user\hapis\hapis\overlay.h(25): warning C4005: 'DIRECTINPUT_VERSION': macro redefinition
+  C:\Program Files (x86)\Windows Kits\8.1\Include\um\dinput.h(48): note: see previous definition of 'DIRECTINPUT_VERSION'
 C:\Users\user\hapis\Libraries\protobuf-2.5.0\Include\google/protobuf/descriptor.h(1445): warning C4244: 'return': conversion from '__int64' to 'int', possible loss of data
 C:\Users\user\hapis\Libraries\protobuf-2.5.0\Include\google/protobuf/descriptor.h(1447): warning C4244: 'return': conversion from '__int64' to 'int', possible loss of data
 C:\Users\user\hapis\Libraries\protobuf-2.5.0\Include\google/protobuf/descriptor.h(1449): warning C4244: 'return': conversion from '__int64' to 'int', possible loss of data
@@ -13,16 +17,44 @@ C:\Users\user\hapis\Libraries\protobuf-2.5.0\Include\google/protobuf/unknown_fie
 C:\Users\user\hapis\Libraries\protobuf-2.5.0\Include\google/protobuf/unknown_field_set.h(237): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
 C:\Users\user\hapis\Libraries\protobuf-2.5.0\Include\google/protobuf/unknown_field_set.h(305): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
   overlay.cpp
+  C:\Program Files (x86)\Windows Kits\8.1\Include\um\dinput.h: DIRECTINPUT_VERSION undefined. Defaulting to version 0x0800
+c:\users\user\hapis\hapis\overlay.h(25): warning C4005: 'DIRECTINPUT_VERSION': macro redefinition
+  C:\Program Files (x86)\Windows Kits\8.1\Include\um\dinput.h(48): note: see previous definition of 'DIRECTINPUT_VERSION'
 overlay.cpp(39): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
 overlay.cpp(40): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-overlay.cpp(196): warning C4244: 'argument': conversion from 'float' to 'BYTE', possible loss of data
-overlay.obj : error LNK2001: unresolved external symbol "void __cdecl ImGui_ImplDX9_InvalidateDeviceObjects(void)" (?ImGui_ImplDX9_InvalidateDeviceObjects@@YAXXZ)
-overlay.obj : error LNK2001: unresolved external symbol "bool __cdecl ImGui_ImplDX9_Init(void *,struct IDirect3DDevice9 *)" (?ImGui_ImplDX9_Init@@YA_NPEAXPEAUIDirect3DDevice9@@@Z)
-overlay.obj : error LNK2001: unresolved external symbol "bool __cdecl ImGui_ImplDX9_CreateDeviceObjects(void)" (?ImGui_ImplDX9_CreateDeviceObjects@@YA_NXZ)
-overlay.obj : error LNK2001: unresolved external symbol "bool __cdecl ImGui::ColorEdit3(char const *,float * const)" (?ColorEdit3@ImGui@@YA_NPEBDQEAM@Z)
-overlay.obj : error LNK2001: unresolved external symbol "struct ImGuiIO & __cdecl ImGui::GetIO(void)" (?GetIO@ImGui@@YAAEAUImGuiIO@@XZ)
-overlay.obj : error LNK2001: unresolved external symbol "bool __cdecl ImGui::SliderFloat(char const *,float *,float,float,char const *,float)" (?SliderFloat@ImGui@@YA_NPEBDPEAMMM0M@Z)
-overlay.obj : error LNK2001: unresolved external symbol "bool __cdecl ImGui::Button(char const *,struct ImVec2 const &)" (?Button@ImGui@@YA_NPEBDAEBUImVec2@@@Z)
-overlay.obj : error LNK2001: unresolved external symbol "void __cdecl ImGui::Render(void)" (?Render@ImGui@@YAXXZ)
-overlay.obj : error LNK2001: unresolved external symbol "void __cdecl ImGui::Text(char const *,...)" (?Text@ImGui@@YAXPEBDZZ)
-C:\Users\user\hapis\x64\Release\hapis.exe : fatal error LNK1120: 9 unresolved externals
+overlay.cpp(208): warning C4244: 'argument': conversion from 'float' to 'BYTE', possible loss of data
+  Generating code
+  255 of 4942 functions ( 5.2%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    92 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+libprotobuf.lib(descriptor.obj) : warning LNK4099: PDB 'libprotobuf.pdb' was not found with 'libprotobuf.lib(descriptor.obj)' or at 'C:\Users\user\hapis\x64\Release\libprotobuf.pdb'; linking object as if no debug info
+libprotobuf.lib(descriptor.pb.obj) : warning LNK4099: PDB 'libprotobuf.pdb' was not found with 'libprotobuf.lib(descriptor.pb.obj)' or at 'C:\Users\user\hapis\x64\Release\libprotobuf.pdb'; linking object as if no debug info
+libprotobuf.lib(descriptor_database.obj) : warning LNK4099: PDB 'libprotobuf.pdb' was not found with 'libprotobuf.lib(descriptor_database.obj)' or at 'C:\Users\user\hapis\x64\Release\libprotobuf.pdb'; linking object as if no debug info
+libprotobuf.lib(dynamic_message.obj) : warning LNK4099: PDB 'libprotobuf.pdb' was not found with 'libprotobuf.lib(dynamic_message.obj)' or at 'C:\Users\user\hapis\x64\Release\libprotobuf.pdb'; linking object as if no debug info
+libprotobuf.lib(extension_set.obj) : warning LNK4099: PDB 'libprotobuf.pdb' was not found with 'libprotobuf.lib(extension_set.obj)' or at 'C:\Users\user\hapis\x64\Release\libprotobuf.pdb'; linking object as if no debug info
+libprotobuf.lib(extension_set_heavy.obj) : warning LNK4099: PDB 'libprotobuf.pdb' was not found with 'libprotobuf.lib(extension_set_heavy.obj)' or at 'C:\Users\user\hapis\x64\Release\libprotobuf.pdb'; linking object as if no debug info
+libprotobuf.lib(generated_message_reflection.obj) : warning LNK4099: PDB 'libprotobuf.pdb' was not found with 'libprotobuf.lib(generated_message_reflection.obj)' or at 'C:\Users\user\hapis\x64\Release\libprotobuf.pdb'; linking object as if no debug info
+libprotobuf.lib(generated_message_util.obj) : warning LNK4099: PDB 'libprotobuf.pdb' was not found with 'libprotobuf.lib(generated_message_util.obj)' or at 'C:\Users\user\hapis\x64\Release\libprotobuf.pdb'; linking object as if no debug info
+libprotobuf.lib(coded_stream.obj) : warning LNK4099: PDB 'libprotobuf.pdb' was not found with 'libprotobuf.lib(coded_stream.obj)' or at 'C:\Users\user\hapis\x64\Release\libprotobuf.pdb'; linking object as if no debug info
+libprotobuf.lib(tokenizer.obj) : warning LNK4099: PDB 'libprotobuf.pdb' was not found with 'libprotobuf.lib(tokenizer.obj)' or at 'C:\Users\user\hapis\x64\Release\libprotobuf.pdb'; linking object as if no debug info
+libprotobuf.lib(zero_copy_stream.obj) : warning LNK4099: PDB 'libprotobuf.pdb' was not found with 'libprotobuf.lib(zero_copy_stream.obj)' or at 'C:\Users\user\hapis\x64\Release\libprotobuf.pdb'; linking object as if no debug info
+libprotobuf.lib(zero_copy_stream_impl.obj) : warning LNK4099: PDB 'libprotobuf.pdb' was not found with 'libprotobuf.lib(zero_copy_stream_impl.obj)' or at 'C:\Users\user\hapis\x64\Release\libprotobuf.pdb'; linking object as if no debug info
+libprotobuf.lib(zero_copy_stream_impl_lite.obj) : warning LNK4099: PDB 'libprotobuf.pdb' was not found with 'libprotobuf.lib(zero_copy_stream_impl_lite.obj)' or at 'C:\Users\user\hapis\x64\Release\libprotobuf.pdb'; linking object as if no debug info
+libprotobuf.lib(message.obj) : warning LNK4099: PDB 'libprotobuf.pdb' was not found with 'libprotobuf.lib(message.obj)' or at 'C:\Users\user\hapis\x64\Release\libprotobuf.pdb'; linking object as if no debug info
+libprotobuf.lib(message_lite.obj) : warning LNK4099: PDB 'libprotobuf.pdb' was not found with 'libprotobuf.lib(message_lite.obj)' or at 'C:\Users\user\hapis\x64\Release\libprotobuf.pdb'; linking object as if no debug info
+libprotobuf.lib(reflection_ops.obj) : warning LNK4099: PDB 'libprotobuf.pdb' was not found with 'libprotobuf.lib(reflection_ops.obj)' or at 'C:\Users\user\hapis\x64\Release\libprotobuf.pdb'; linking object as if no debug info
+libprotobuf.lib(repeated_field.obj) : warning LNK4099: PDB 'libprotobuf.pdb' was not found with 'libprotobuf.lib(repeated_field.obj)' or at 'C:\Users\user\hapis\x64\Release\libprotobuf.pdb'; linking object as if no debug info
+libprotobuf.lib(atomicops_internals_x86_msvc.obj) : warning LNK4099: PDB 'libprotobuf.pdb' was not found with 'libprotobuf.lib(atomicops_internals_x86_msvc.obj)' or at 'C:\Users\user\hapis\x64\Release\libprotobuf.pdb'; linking object as if no debug info
+libprotobuf.lib(common.obj) : warning LNK4099: PDB 'libprotobuf.pdb' was not found with 'libprotobuf.lib(common.obj)' or at 'C:\Users\user\hapis\x64\Release\libprotobuf.pdb'; linking object as if no debug info
+libprotobuf.lib(once.obj) : warning LNK4099: PDB 'libprotobuf.pdb' was not found with 'libprotobuf.lib(once.obj)' or at 'C:\Users\user\hapis\x64\Release\libprotobuf.pdb'; linking object as if no debug info
+libprotobuf.lib(stringprintf.obj) : warning LNK4099: PDB 'libprotobuf.pdb' was not found with 'libprotobuf.lib(stringprintf.obj)' or at 'C:\Users\user\hapis\x64\Release\libprotobuf.pdb'; linking object as if no debug info
+libprotobuf.lib(structurally_valid.obj) : warning LNK4099: PDB 'libprotobuf.pdb' was not found with 'libprotobuf.lib(structurally_valid.obj)' or at 'C:\Users\user\hapis\x64\Release\libprotobuf.pdb'; linking object as if no debug info
+libprotobuf.lib(strutil.obj) : warning LNK4099: PDB 'libprotobuf.pdb' was not found with 'libprotobuf.lib(strutil.obj)' or at 'C:\Users\user\hapis\x64\Release\libprotobuf.pdb'; linking object as if no debug info
+libprotobuf.lib(substitute.obj) : warning LNK4099: PDB 'libprotobuf.pdb' was not found with 'libprotobuf.lib(substitute.obj)' or at 'C:\Users\user\hapis\x64\Release\libprotobuf.pdb'; linking object as if no debug info
+libprotobuf.lib(text_format.obj) : warning LNK4099: PDB 'libprotobuf.pdb' was not found with 'libprotobuf.lib(text_format.obj)' or at 'C:\Users\user\hapis\x64\Release\libprotobuf.pdb'; linking object as if no debug info
+libprotobuf.lib(unknown_field_set.obj) : warning LNK4099: PDB 'libprotobuf.pdb' was not found with 'libprotobuf.lib(unknown_field_set.obj)' or at 'C:\Users\user\hapis\x64\Release\libprotobuf.pdb'; linking object as if no debug info
+libprotobuf.lib(wire_format.obj) : warning LNK4099: PDB 'libprotobuf.pdb' was not found with 'libprotobuf.lib(wire_format.obj)' or at 'C:\Users\user\hapis\x64\Release\libprotobuf.pdb'; linking object as if no debug info
+libprotobuf.lib(wire_format_lite.obj) : warning LNK4099: PDB 'libprotobuf.pdb' was not found with 'libprotobuf.lib(wire_format_lite.obj)' or at 'C:\Users\user\hapis\x64\Release\libprotobuf.pdb'; linking object as if no debug info
+  hapis.vcxproj -> C:\Users\user\hapis\x64\Release\hapis.exe
+  hapis.vcxproj -> C:\Users\user\hapis\x64\Release\hapis.pdb (Full PDB)

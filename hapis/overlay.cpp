@@ -45,36 +45,33 @@ namespace Overlay {
 				for (int i = 0; i < players.size(); i++) {
 					Rust::Vector3 pos;
 					bool visible = Math::World2Screen(localPlayer->pos, localPlayer->rot, players.at(i), pos, height, width);
-					Drawing::DrawFormattedString("%f, %f, %f", width - 200, (i + 10) * 5, 255, 255, 255, 255, Font, pos.x, pos.y, pos.z);
+					Drawing::DrawFormattedString("%f, %f, %f", width - 200, (i + 10) * 25, 255, 255, 255, 255, Font, pos.x, pos.y, pos.z);
 					//if (visible)  Drawing::DrawString("player", pos.x, pos.y, 255, 255, 255, 255, Font);
 				}
 			}
 
 			/* ImGui */
-			static float f = 0.0f;
-			ImGui::Text("Hello, world!");
-			ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-			ImGui::ColorEdit3("clear color", (float*)&clear_col);
-			if (ImGui::Button("Test Window")) show_test_window ^= 1;
-			if (ImGui::Button("Another Window")) show_another_window ^= 1;
-			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+			ImGui_ImplDX9_NewFrame();
 
-			/* Draw Scene */
-			p_Device->SetRenderState(D3DRS_ZENABLE, false);
-			p_Device->SetRenderState(D3DRS_ALPHABLENDENABLE, false);
-			p_Device->SetRenderState(D3DRS_SCISSORTESTENABLE, false);
-			D3DCOLOR clear_col_dx = D3DCOLOR_RGBA((int)(clear_col.x*255.0f), (int)(clear_col.y*255.0f), (int)(clear_col.z*255.0f), (int)(clear_col.w*255.0f));
-			p_Device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, clear_col_dx, 1.0f, 0);
-			if (p_Device->BeginScene() >= 0)
+			ImGui::Begin("same", &show_test_window, ImVec2(300, 250), 0.75f);
 			{
-				ImGui::Render();
-				p_Device->EndScene();
+				if (ImGui::CollapsingHeader("Visuals")) {
+					ImGui::Checkbox("ESP Enabled", &show_test_window);
+					ImGui::Checkbox("Show Boxes", &show_test_window);
+					ImGui::Checkbox("Show Names", &show_test_window);
+				}
+				if (ImGui::CollapsingHeader("Misc")) {
+					ImGui::Checkbox("No Recoil", &show_test_window);
+					ImGui::Checkbox("Bunny Hop", &show_test_window);
+					ImGui::Checkbox("Auto-Accept", &show_test_window);
+				}
 			}
-			p_Device->Present(NULL, NULL, NULL, NULL);
+			ImGui::End(); //End main window
 
 			/* Draw Scene */
-			//p_Device->EndScene();
-			//p_Device->PresentEx(0, 0, 0, 0, 0);
+			ImGui::Render();
+			p_Device->EndScene();
+			p_Device->PresentEx(0, 0, 0, 0, 0);
 		}
 	}
 
@@ -124,41 +121,56 @@ namespace Overlay {
 			printf("[Overlay] Failed to create create DX device");
 
 		D3DXCreateFont(p_Device, 20, 0, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Arial", &Font);
+
+		ImGui_ImplDX9_Init(hwnd, p_Device);
 	}
 
 	/* Fuck WinAPI */
+
 	LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+		ImGuiIO& io = ImGui::GetIO();
 		switch (msg)
 		{
-		case WM_PAINT:
-			render();
-			break;
-
-		case WM_CREATE:
-			DwmExtendFrameIntoClientArea(hWnd, &margin);
-			break;
-
-		case WM_DESTROY:
-			PostQuitMessage(1);
-			return 0;
-		case WM_SIZE:
-			if (p_Device != NULL && wParam != SIZE_MINIMIZED)
-			{
-				ImGui_ImplDX9_InvalidateDeviceObjects();
-				p_Params.BackBufferWidth = LOWORD(lParam);
-				p_Params.BackBufferHeight = HIWORD(lParam);
-				HRESULT hr = p_Device->Reset(&p_Params);
-				if (hr == D3DERR_INVALIDCALL)
-					IM_ASSERT(0);
-				ImGui_ImplDX9_CreateDeviceObjects();
-			}
-			return 0;
-		case WM_SYSCOMMAND:
-			if ((wParam & 0xfff0) == SC_KEYMENU) // Disable ALT application menu
-				return 0;
-			break;
+		case WM_LBUTTONDOWN:
+			io.MouseDown[0] = true;
+			return true;
+		case WM_LBUTTONUP:
+			io.MouseDown[0] = false;
+			return true;
+		case WM_RBUTTONDOWN:
+			io.MouseDown[1] = true;
+			return true;
+		case WM_RBUTTONUP:
+			io.MouseDown[1] = false;
+			return true;
+		case WM_MBUTTONDOWN:
+			io.MouseDown[2] = true;
+			return true;
+		case WM_MBUTTONUP:
+			io.MouseDown[2] = false;
+			return true;
+		case WM_MOUSEWHEEL:
+			io.MouseWheel += GET_WHEEL_DELTA_WPARAM(wParam) > 0 ? +1.0f : -1.0f;
+			return true;
+		case WM_MOUSEMOVE:
+			io.MousePos.x = (signed short)(lParam);
+			io.MousePos.y = (signed short)(lParam >> 16);
+			return true;
+		case WM_KEYDOWN:
+			if (wParam < 256)
+				io.KeysDown[wParam] = 1;
+			return true;
+		case WM_KEYUP:
+			if (wParam < 256)
+				io.KeysDown[wParam] = 0;
+			return true;
+		case WM_CHAR:
+			// You can also use ToAscii()+GetKeyboardState() to retrieve characters.
+			if (wParam > 0 && wParam < 0x10000)
+				io.AddInputCharacter((unsigned short)wParam);
+			return true;
 		default:
-			return DefWindowProc(hWnd, msg, wParam, lParam);
+			return DefWindowProc(hwnd, msg, wParam, lParam);
 			break;
 		}
 		return 0;
@@ -196,10 +208,8 @@ namespace Overlay {
 			SetLayeredWindowAttributes(hwnd, NULL, 1.0f, LWA_ALPHA);
 			SetLayeredWindowAttributes(hwnd, NULL, RGB(0, 0, 0), LWA_COLORKEY);
 			ShowWindow(hwnd, SW_SHOW);
-
+			UpdateWindow(hwnd);
 			InitDirectX();
-
-			ImGui_ImplDX9_Init(hwnd, p_Device);
 		}
 
 		MSG Message;
@@ -207,7 +217,10 @@ namespace Overlay {
 			if (PeekMessage(&Message, hwnd, 0, 0, PM_REMOVE)) {
 				DispatchMessage(&Message);
 				TranslateMessage(&Message);
+				continue;
 			}
+
+			render();
 		}
 	}
 }

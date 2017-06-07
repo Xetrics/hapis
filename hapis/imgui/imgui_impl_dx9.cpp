@@ -162,7 +162,7 @@ void ImGui_ImplDX9_RenderDrawLists(ImDrawData* draw_data)
 	d3d9_state_block->Release();
 }
 
-IMGUI_API LRESULT ImGui_ImplDX9_WndProcHandler(HWND, UINT msg, WPARAM wParam, LPARAM lParam)
+IMGUI_API LRESULT ImGui_ImplDX9_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	ImGuiIO& io = ImGui::GetIO();
 	switch (msg)
@@ -205,6 +205,9 @@ IMGUI_API LRESULT ImGui_ImplDX9_WndProcHandler(HWND, UINT msg, WPARAM wParam, LP
 		if (wParam > 0 && wParam < 0x10000)
 			io.AddInputCharacter((unsigned short)wParam);
 		return true;
+	default:
+		return DefWindowProc(hwnd, msg, wParam, lParam);
+		break;
 	}
 	return 0;
 }
