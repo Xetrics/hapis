@@ -55,11 +55,24 @@ namespace Overlay {
 			if (showGui) {
 				ImGui::Begin("Hapis", &showGui, ImVec2(300, 250), 0.75f);
 				{
-					if (ImGui::CollapsingHeader("Visuals")) {
+					if (ImGui::TreeNodeEx("Visuals", ImGuiTreeNodeFlags_CollapsingHeader)) {
 						ImGui::Checkbox("Crosshair", &settings->crosshair);
+						if (ImGui::TreeNodeEx("Weather", ImGuiTreeNodeFlags_CollapsingHeader)) {
+							if(!settings->weather->freeze_time)
+								ImGui::Checkbox("Always Day", &settings->weather->always_day);
+							if(!settings->weather->always_day)
+								ImGui::Checkbox("Freeze Time", &settings->weather->freeze_time);
+							ImGui::Checkbox("No Rain", &settings->weather->no_rain);
+							ImGui::Checkbox("No Fog", &settings->weather->no_fog);
+							ImGui::Checkbox("No Clouds", &settings->weather->no_clouds);
+							ImGui::Checkbox("No Wind", &settings->weather->no_wind);
+							ImGui::TreePop();
+						}
+						ImGui::TreePop();
 					}
-					if (ImGui::CollapsingHeader("Misc")) {
+					if (ImGui::TreeNodeEx("Misc", ImGuiTreeNodeFlags_CollapsingHeader)) {
 						ImGui::Checkbox("Debug Mode", &settings->debug);
+						ImGui::TreePop();
 					}
 				}
 				ImGui::End(); //End main window

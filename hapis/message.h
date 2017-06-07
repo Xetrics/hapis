@@ -123,6 +123,24 @@ namespace Rust
 		}
 	};
 
+	class EntityDestroyMessage : public Message
+	{
+	public:
+		uint32_t entity_id;
+	public:
+		virtual void Serialize(void* pointer)
+		{
+			Write<uint8_t>(pointer, MessageType::EntityPosition);
+			Write<uint32_t>(pointer, entity_id);
+		}
+
+		virtual void Deserialize(void* pointer)
+		{
+			assert((type = (MessageType)Read<uint8_t>(pointer)) == MessageType::EntityPosition);
+			entity_id = Read<uint32_t>(pointer);
+		}
+	};
+
 	class ConsoleCommandMessage : public Message
 	{
 	public:

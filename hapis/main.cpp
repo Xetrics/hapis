@@ -4,6 +4,8 @@
 #include <string>
 #include <stdlib.h>
 #include <algorithm>
+#include <chrono>
+
 
 #include "rrapi.h"
 #include "stringpool.h"
@@ -14,9 +16,20 @@
 #include "main.h"
 #include "protos\main.pb.h"
 
+#define if_setting(set, code) { if(settings->set){ code; } }
+
 std::unordered_map<int, Rust::Vector3> players;
 Rust::LocalPlayer* localPlayer;
 Settings* settings = new Settings();
+
+int randomgen(int max, int min) // totally not skidded
+{
+	srand(time(NULL));
+	int random = rand() % max + min;
+	return random;
+}
+
+google::protobuf::int64 staticTime = 0;
 
 void OnRustPacketReceived(Proxy::Client* client, unsigned char* data, uint32_t size)
 {
@@ -49,6 +62,22 @@ void OnRustPacketReceived(Proxy::Client* client, unsigned char* data, uint32_t s
 			else {
 				players[entity.basenetworkable().uid()] = Rust::Vector3{ 0, 0, 0 };
 			}
+		} else if (entity.has_environment()) {
+			Environment* env = new Environment(entity.environment());
+			//if (staticTime == 0)
+			//	staticTime = env->datetime();
+			//env->set_datetime(staticTime);
+
+			if_setting(weather->always_day, env->set_datetime(24000));
+			if_setting(weather->no_fog, env->set_fog(-1));
+			if_setting(weather->no_rain, env->set_rain(-1));
+			if_setting(weather->no_clouds, env->set_clouds(-1));
+			if_setting(weather->no_wind, env->set_wind(-1));
+
+			entity.release_environment();
+			entity.set_allocated_environment(env);
+			std::string newEntityData = entity.SerializeAsString();
+			memcpy(data + 5, &newEntityData[0], newEntityData.size());
 		}
 	}
 	else if (data[0] == Rust::MessageType::EntityDestroy) {
