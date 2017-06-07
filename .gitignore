@@ -287,6 +287,3 @@ __pycache__/
 *.btm.cs
 *.odx.cs
 *.xsd.cs
-
-hapis/hapis.vcxproj
-hapis/hapis.vcxproj.filters
