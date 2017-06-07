@@ -45,18 +45,22 @@ namespace Overlay {
 				for (auto player : players) {
 					Rust::Vector3 feetPos = player.second;
 					Rust::Vector3 headPos = feetPos;
+					Rust::Vector3 screenFeetPos = { 0 }, screenHeadPos = { 0 };
+			
+					headPos.y += 1.6f;
 
-					headPos.y + 5.0f;
+					bool visible = Math::World2Screen(localPlayer->pos, localPlayer->rot, FOV, { 0, 1.5f, 0 }, headPos, screenHeadPos, width, height);
+					visible = visible && Math::World2Screen(localPlayer->pos, localPlayer->rot, FOV, { 0, 1.5f, 0 }, feetPos, screenFeetPos, width, height);
 
-					bool visible = Math::World2Screen(localPlayer->pos, localPlayer->rot, FOV, { 0, 1.5f, 0 }, headPos, feetPos, width, height);
-					visible &= visible && Math::World2Screen(localPlayer->pos, localPlayer->rot, FOV, { 0, 1.5f, 0 }, feetPos, feetPos, width, height);
+					Drawing::DrawString("feet", screenFeetPos.x, screenFeetPos.y, 255, 255, 0, 0, Font);
+					Drawing::DrawString("head", screenHeadPos.x, screenHeadPos.y, 255, 255, 0, 0, Font);
 
 					float distance = Math::Get3dDistance(localPlayer->pos, feetPos);
 					float h = feetPos.x - headPos.x;
 					float w = h / 2.0f;
 
 					if (visible && distance < 963.0f)
-						Drawing::DrawBorderBox(p_Device, feetPos.x, headPos.y, w + 2.0f, h, 2, 255, 255, 255, 255);
+						Drawing::DrawBorderBox(p_Device, screenFeetPos.x, screenHeadPos.y, w + 2.0f, h, 2, 255, 255, 255, 255);
 				}
 			}
 
