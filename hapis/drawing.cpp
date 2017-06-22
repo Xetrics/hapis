@@ -28,10 +28,11 @@ void Drawing::DrawFilledRectangle(IDirect3DDevice9Ex* p_Device, float x, float y
 
 void Drawing::DrawBorderBox(IDirect3DDevice9Ex* p_Device, int x, int y, int w, int h, int thickness, int a, int r, int g, int b)
 {
-	DrawFilledRectangle(p_Device, x, y, w, y + thickness, a, r, g, b); // x
-	DrawFilledRectangle(p_Device, x, y, x + thickness, h, a, r, g, b); // y
-	DrawFilledRectangle(p_Device, x, h, w, h + thickness, a, r, g, b); // w
-	DrawFilledRectangle(p_Device, w, y, w + thickness, h + thickness, a, r, g, b); // h
+
+	DrawFilledRectangle(p_Device, x, y, w, thickness, a, r, g, b);
+	DrawFilledRectangle(p_Device, x, y, thickness, h, a, r, g, b);
+	DrawFilledRectangle(p_Device, (x + w), y, thickness, h, a, r, g, b);
+	DrawFilledRectangle(p_Device, x, y + h, w + thickness, thickness, a, r, g, b);
 }
 
 void Drawing::DrawLine(IDirect3DDevice9Ex* p_Device, int bx, int by, int bw, D3DCOLOR color)

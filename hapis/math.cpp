@@ -81,3 +81,13 @@ bool Math::World2Screen(Rust::Vector3 from, Rust::Vector3 rot, float fovDegree, 
 
 	return result;
 }
+
+float Math::Get3dDistance(Rust::Vector3 c1, Rust::Vector3 c2)
+{
+	//(Dx*Dx+Dy*Dy+Dz*Dz)^.5 
+	float dx = c2.x - c1.x;
+	float dy = c2.y - c1.y;
+	float dz = c2.z - c1.z;
+
+	return sqrt((float)(dx * dx + dy * dy + dz * dz));
+}

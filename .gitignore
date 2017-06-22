@@ -23,6 +23,10 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
+hapis/x64/
+hapis/x86/
+hapis/Release/
+hapis/Debug/
 
 # Visual Studio 2015 cache/options directory
 .vs/
@@ -72,6 +76,9 @@ artifacts/
 *.pidb
 *.svclog
 *.scc
+*.pdb
+*.obj
+*.tlog
 
 # Chutzpah Test files
 _Chutzpah*

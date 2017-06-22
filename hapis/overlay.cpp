@@ -90,11 +90,24 @@ namespace Overlay {
 			if (settings->esp) {
 				Rust::Vector3 pos;
 				for (auto player : players) {
-					Rust::Vector3 pos;
-					bool visible = Math::World2Screen(localPlayer->pos, localPlayer->rot, FOV, { 0, 1.5f, 0 }, player.second, pos, width, height);
-					Rust::Vector3 distance = localPlayer->pos - player.second;
-					if (visible && (distance.x < 50 && distance.y < 50 && distance.z < 50))
-						Drawing::DrawBorderBox(p_Device, pos.x, pos.y + 50, 10, 10, 3, 255, 255, 255, 255);
+					Rust::Vector3 feetPos = player.second;
+					Rust::Vector3 headPos = feetPos;
+					Rust::Vector3 screenFeetPos = { 0 }, screenHeadPos = { 0 };
+			
+					headPos.y += 1.6f;
+
+					bool visible = Math::World2Screen(localPlayer->pos, localPlayer->rot, FOV, { 0, 1.5f, 0 }, headPos, screenHeadPos, width, height);
+					visible = visible && Math::World2Screen(localPlayer->pos, localPlayer->rot, FOV, { 0, 1.5f, 0 }, feetPos, screenFeetPos, width, height);
+
+					Drawing::DrawString("feet", screenFeetPos.x, screenFeetPos.y, 255, 255, 0, 0, Font);
+					Drawing::DrawString("head", screenHeadPos.x, screenHeadPos.y, 255, 255, 0, 0, Font);
+
+					float distance = Math::Get3dDistance(localPlayer->pos, feetPos);
+					float h = feetPos.x - headPos.x;
+					float w = h / 2.0f;
+
+					if (visible && distance < 963.0f)
+						Drawing::DrawBorderBox(p_Device, screenFeetPos.x, screenHeadPos.y, w + 2.0f, h, 2, 255, 255, 255, 255);
 				}
 			}
 
@@ -199,10 +212,6 @@ namespace Overlay {
 			else
 				ShowWindow(hwnd, SW_HIDE);
 
-			if (GetAsyncKeyState(VK_INSERT)) {
-				ToggleGui();
-			}
-
 			Sleep(WINDOW_ADJUST_RATE);
 		}
 	}
@@ -292,8 +301,21 @@ namespace Overlay {
 		switch (msg)
 		{
 		case WM_PAINT:
+		{
+			static bool bKeyPressed = false;
+			bool bKeyPressedThisFrame = (GetAsyncKeyState(VK_INSERT) & 0x8000) != 0;
+
+			if (bKeyPressedThisFrame != bKeyPressed &&
+				bKeyPressedThisFrame)
+			{
+				ToggleGui();
+			}
+
+			bKeyPressed = bKeyPressedThisFrame;
+
 			render();
 			break;
+		}
 		case WM_CREATE:
 			DwmExtendFrameIntoClientArea(hWnd, &margin);
 			break;
@@ -394,8 +416,10 @@ namespace Overlay {
 		}
 
 		MSG Message;
-		for (;;) {
-			if (PeekMessage(&Message, hwnd, 0, 0, PM_REMOVE)) {
+		while (true)
+		{
+			if (GetMessage(&Message, hwnd, 0, 0))
+			{
 				DispatchMessage(&Message);
 				TranslateMessage(&Message);
 			}

@@ -57,7 +57,10 @@ void OnRustPacketReceived(Proxy::Client* client, unsigned char* data, uint32_t s
 
 		if (entity.has_baseplayer() && entity.has_basenetworkable()) {
 			if (entity.baseplayer().has_metabolism()) {
-				localPlayer = new Rust::LocalPlayer(Rust::Vector3{ 0, 0, 0 }, Rust::Vector3{ 0, 0, 0 }, entity.basenetworkable().uid());
+				Vector3Serialized pos = entity.baseentity().pos();
+				Vector3Serialized rot = entity.baseentity().rot();
+
+				localPlayer = new Rust::LocalPlayer(Rust::Vector3{pos.x(), pos.y(), pos.z()}, Rust::Vector3{ rot.x(), rot.y(), rot.z() }, entity.basenetworkable().uid());
 			}
 			else {
 				players[entity.basenetworkable().uid()] = Rust::Vector3{ 0, 0, 0 };
