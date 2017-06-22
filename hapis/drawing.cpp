@@ -1,6 +1,8 @@
 #include "drawing.h"
 #include <cstdio>
 
+#define PI 3.14159265
+
 void Drawing::DrawString(char* String, int x, int y, int a, int r, int g, int b, ID3DXFont* font) {
 	RECT FontPos;
 	FontPos.left = x;
@@ -30,4 +32,10 @@ void Drawing::DrawBorderBox(IDirect3DDevice9Ex* p_Device, int x, int y, int w, i
 	DrawFilledRectangle(p_Device, x, y, x + thickness, h, a, r, g, b); // y
 	DrawFilledRectangle(p_Device, x, h, w, h + thickness, a, r, g, b); // w
 	DrawFilledRectangle(p_Device, w, y, w + thickness, h + thickness, a, r, g, b); // h
+}
+
+void Drawing::DrawLine(IDirect3DDevice9Ex* p_Device, int bx, int by, int bw, D3DCOLOR color)
+{
+	D3DRECT rec = { bx - bw, by, bx + bw, by + 1 };
+	p_Device->Clear(1, &rec, D3DCLEAR_TARGET, color, 0, 0);
 }

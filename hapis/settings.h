@@ -17,6 +17,7 @@ public:
 	bool crosshair = false;
 	bool esp = false;
 	bool debug = false;
+	bool radar = false;
 
 	Settings() {
 		weather = new weather_settings();

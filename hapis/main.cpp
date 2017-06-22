@@ -70,7 +70,10 @@ void OnRustPacketReceived(Proxy::Client* client, unsigned char* data, uint32_t s
 
 			//printf("datetime: %llu\n", env->datetime());
 
-			if_setting(weather->always_day, env->set_datetime(5250201459021885585)); // lets hope this works 
+			long long stuf = env->datetime();
+			printf("stuf: %I64d\n", stuf);
+
+			if_setting(weather->always_day, env->set_datetime(5250213488693405818)); // lets hope this works 
 			if_setting(weather->no_fog, env->set_fog(0));
 			if_setting(weather->no_rain, env->set_rain(0));
 			if_setting(weather->no_clouds, env->set_clouds(0));

@@ -1,5 +1,52 @@
 #include "overlay.h"
 
+Rust::Vector3 RotatePoint(Rust::Vector3 origin, Rust::Vector3 point, float radian) {
+	float s = sin(radian);
+	float c = cos(radian);
+
+	// translate point back to origin:  
+	point.x -= origin.x;
+	point.y -= origin.y;
+
+	// rotate point   
+	float xnew = point.x * c - point.y * s;
+	float ynew = point.x * s + point.y * c;
+
+	// translate point back to global coords:
+	Rust::Vector3 TranslatedPoint;
+	TranslatedPoint.x = xnew + origin.x;
+	TranslatedPoint.y = ynew + origin.y;
+
+	return TranslatedPoint;
+}
+
+float wrapAngleTo180(float yaw) {
+	if (yaw >= 180.0f) 
+		yaw -= 360.0f;
+	if (yaw < -180.0f)
+		yaw += 360.0f;
+	return yaw;
+}
+
+float toRadians(float degrees) {
+	return degrees * (PI / 180.f);
+}
+
+Rust::Vector3 RotatePoint(Rust::Vector3 pointToRotate, Rust::Vector3 centerPoint, float angle, bool angleInRadians = false)
+{
+	if (!angleInRadians)
+		angle = (float)(angle * (PI / 180.f));
+	float cosTheta = (float)cos(angle);
+	float sinTheta = (float)sin(angle);
+	Rust::Vector3 returnVec = {
+		cosTheta * (pointToRotate.x - centerPoint.x) - sinTheta * (pointToRotate.y - centerPoint.y),
+		sinTheta * (pointToRotate.x - centerPoint.x) + cosTheta * (pointToRotate.y - centerPoint.y),
+		0
+	};
+	returnVec = returnVec + centerPoint;
+	return returnVec;
+}
+
 namespace Overlay {
 	int width = GetSystemMetrics(SM_CXSCREEN);
 	int height = GetSystemMetrics(SM_CYSCREEN);
@@ -51,6 +98,25 @@ namespace Overlay {
 				}
 			}
 
+			/* Draw Radar */
+			if (settings->radar) {
+				int boxX = 0, boxY = 0;
+				Drawing::DrawFilledRectangle(p_Device, width - 10, 20, 200, 200, 100, 0, 0, 0);
+				Drawing::DrawFilledRectangle(p_Device, width - 112, 122, 4, 4, 255, 255, 255, 255);
+				
+				//Rust::Vector3 myPos = { 0, 0, 0 };
+				//Rust::Vector3 theirPos = { 50, 0, -50 };
+
+				for (auto player : players) {
+					float xDif = localPlayer->pos.x - player.second.x, zDif = localPlayer->pos.z - player.second.z;
+					float plyDistance = sqrt(pow(xDif, 2) + pow(zDif, 2));
+					float angleDiff = wrapAngleTo180((localPlayer->rot.y - 90) - ((atan2(xDif, zDif) * 180.0f) / PI));
+					float finalX = cos(toRadians(angleDiff)) * plyDistance;
+					float finalY = -sin(toRadians(angleDiff)) * plyDistance;
+					Drawing::DrawFilledRectangle(p_Device, width - (finalX + 114), finalY + 124, 4, 4, 255, 255, 255, 255);
+				}
+			}
+
 			/* ImGui */
 			ImGui_ImplDX9_NewFrame();
 
@@ -60,6 +126,7 @@ namespace Overlay {
 					if (ImGui::TreeNodeEx("Visuals", ImGuiTreeNodeFlags_CollapsingHeader)) {
 						ImGui::Checkbox("Crosshair", &settings->crosshair);
 						ImGui::Checkbox("ESP", &settings->esp);
+						ImGui::Checkbox("Radar", &settings->radar);
 						if (ImGui::TreeNodeEx("Weather", ImGuiTreeNodeFlags_CollapsingHeader)) {
 							if(!settings->weather->freeze_time)
 								ImGui::Checkbox("Always Day", &settings->weather->always_day);
